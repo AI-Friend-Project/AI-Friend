@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "767337152291",
+    "project_id": "aifriend-fbec8",
+    "storage_bucket": "aifriend-fbec8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:767337152291:android:ce5b937c32ea4366945696",
+        "android_client_info": {
+          "package_name": "com.example.aifriend"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "767337152291-2f88h6n42ce1dlnrmjk5m5qdqd0e33h9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOquvxjOUZuft9M3xMiA4Mc6r7EmuHr4U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "767337152291-2f88h6n42ce1dlnrmjk5m5qdqd0e33h9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
