@@ -1,18 +1,15 @@
 package com.example.aifriend
 
-import android.app.Activity
-import android.content.Intent
+import android.os.Build
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityCompat.finishAffinity
 import com.example.aifriend.databinding.ActivityJoinBinding
 import com.example.aifriend.databinding.ActivityLoginBinding
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestore
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class LoginActivity : AppCompatActivity(){
     lateinit var binding: ActivityLoginBinding
@@ -48,6 +45,7 @@ class LoginActivity : AppCompatActivity(){
                                             Toast.LENGTH_SHORT).show()
                                         //파이어스토어 문서 생성
                                         documentCreate(email)
+                                        notiCreate(email)
                                         setContentView(binding.root) //회원가입 후 로그인 화면으로 이동
                                     }else {
                                         Toast.makeText(baseContext, "메일 전송 실패",
@@ -108,6 +106,20 @@ class LoginActivity : AppCompatActivity(){
         //fav 컬렉션의 해당 관심사 문서 안 필드배열에 사용자 이메일 추가
         MyApplication.db.collection("fav").document("AI친구")
             .update("users", FieldValue.arrayUnion(email))
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun notiCreate(email : String){
+        var currentTime = LocalDateTime.now()
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd, HH:mm:ss")
+        val nowTime = currentTime.format(formatter)
+        var message = "알림 메세지는 이 곳에 표시됩니다."
+        val notification = mapOf(
+            "content" to message,
+            "time" to nowTime.toString()
+        )
+        MyApplication.db.collection("user").document(email)
+            .collection("notification").add(notification)
     }
 
     //뒤로가기로 앱 종료

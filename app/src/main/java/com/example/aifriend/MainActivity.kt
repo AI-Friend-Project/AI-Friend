@@ -3,12 +3,16 @@ package com.example.aifriend
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
 import android.widget.Toast
-import com.example.aifriend.Tab1
-import com.example.aifriend.Tab2
-import com.example.aifriend.Tab3
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.aifriend.data.favData
 import com.example.aifriend.databinding.ActivityMainBinding
 import com.example.aifriend.databinding.FragmentTab1Binding
+import com.example.aifriend.recycler.tab2Adapter
+import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 
 //로그인 확인 후 맞는 화면 띄우기
@@ -20,6 +24,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var tab1: Tab1
     lateinit var tab2: Tab2
     lateinit var tab3: Tab3
+    lateinit var drawerLayout: DrawerLayout
+    lateinit var navigationView: NavigationView
 
     //뒤로가기 종료
     var mBackWait:Long = 0
@@ -42,6 +48,16 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         binding1 = FragmentTab1Binding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        //툴바
+        val toolbar = binding.mainToolbar as androidx.appcompat.widget.Toolbar
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24)
+
+        //네비게이션 드로어
+        drawerLayout = binding.drawerLayout
+        navigationView = binding.navView
 
         tab1 = Tab1()
         tab2 = Tab2()
@@ -72,6 +88,35 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item!!.itemId){
+            android.R.id.home -> {
+                drawerLayout.openDrawer(GravityCompat.START)
+                makeRecyclerView()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun makeRecyclerView(){
+        //친구목록띄우기
+        MyApplication.db.collection("fav")
+            .get()
+            .addOnSuccessListener { result ->
+                val itemList = mutableListOf<favData>()
+                for (document in result){
+                    val item = document.toObject(favData::class.java)
+                    item.docId = document.id
+                    itemList.add(item)
+                }
+                binding.navRecyclerView.layoutManager = LinearLayoutManager(this)
+                binding.navRecyclerView.adapter = tab2Adapter(this, itemList)
+            }.addOnFailureListener { exception ->
+                Toast.makeText(this, "서버로부터 데이터 획득에 실패했습니다.", Toast.LENGTH_SHORT).show()
+            }
+    }
+
     override fun onBackPressed() {
         // 뒤로가기 버튼 클릭
         if(System.currentTimeMillis() - mBackWait >=2000 ) {
