@@ -1,99 +1,88 @@
 package com.example.aifriend.recycler
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
+import com.example.aifriend.ChatRoomActivity
 import com.example.aifriend.R
 import com.example.aifriend.data.ChatData
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
 
 
-class ChatAdapter(var user: String, var itemList: ArrayList<ChatData>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    /*
+class ChatAdapter: RecyclerView.Adapter<ChatAdapter.UserViewHolder>() {
+    private val chatList = ArrayList<ChatData>()
+    private var uid : String? = null
+    private var fireStore: FirebaseFirestore? = null
+    private val destinationUsers: ArrayList<String> = arrayListOf()
+
     init {
-    }
-    */
+        uid = Firebase.auth.currentUser?.uid.toString()
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        var view: View?
+        fireStore = FirebaseFirestore.getInstance()
 
-        return when(viewType) {
-            // sender 일 때 1 설정
-            1 -> {
-                view = LayoutInflater.from(parent.context).inflate(
-                    R.layout.sender_msgbox,
-                    parent,
-                    false
-                )
-                senderViewHolder(view)
+        fireStore?.collection("chatRooms")
+            ?.orderBy("users/$uid")
+            ?.whereEqualTo("uid", uid)
+            ?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                // ArrayList 비워줌
+                chatList.clear()
+
+                for (snapshot in querySnapshot!!.documents) {
+                    var item = snapshot.toObject<ChatData>()
+                    chatList.add(item!!)
+                }
             }
-            // receiver 일 때 2 설정
-            else -> {
-                view = LayoutInflater.from(parent.context).inflate(
-                    R.layout.receiver_msgbox,
-                    parent,
-                    false
-                )
-                receiverViewHolder(view)
-            }
-        }
+        notifyDataSetChanged()
+
     }
 
-    //sender 뷰 홀더 설정
-    inner class senderViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        private val msgText: TextView = view.findViewById(R.id.msgTextView)
-        private val timeText: TextView = view.findViewById(R.id.timeTextView)
-        
-        fun bind(item: ChatData) {
-            msgText.text = item.message
-            timeText.text = item.time.toString()
-        }
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
+        return UserViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_chat, parent, false))
     }
 
-    //receiver 뷰 홀더 설정
-    inner class receiverViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        
-        private val nameText: TextView = view.findViewById(R.id.nameTextView)
-        private val msgText: TextView = view.findViewById(R.id.msgTextView)
-        private val timeText: TextView = view.findViewById(R.id.timeTextView)
+    //user 뷰 홀더 설정
+    inner class UserViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-        fun bind(item: ChatData) {
-            nameText.text = item.name
-            msgText.text = item.message
-            timeText.text = item.time.toString()
-        }
+        private val chatTitleTextView: TextView = view.findViewById(R.id.chatTitleTextView)
+        private val chatMessageTextView: TextView = view.findViewById(R.id.chatMessageTextView)
     }
+
 
 
     @SuppressLint("WrongConstant")
     @RequiresApi(31)
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
+        var destinationUid: String? = null
 
-        when(itemList[position].type) {
-            1 -> {
-                (holder as senderViewHolder).bind(itemList[position])
-                holder.setIsRecyclable(false)
+        //채팅방 유저 체크
+        for(user in chatList[position].users.keys) {
+            if(user != uid) {
+                destinationUid = user
+                destinationUsers.add(destinationUid)
             }
-            else -> {
-                (holder as receiverViewHolder).bind(itemList[position])
-                holder.setIsRecyclable(false)
-            }
+        }
+
+        //채팅창 선책 시 이동
+        holder.itemView.setOnClickListener {
+            val intent = Intent(holder.itemView.context, ChatRoomActivity::class.java)
+            intent.putExtra("destinationUid", destinationUsers[position])
+            holder.itemView.context?.startActivity(intent)
         }
 
     }
 
     override fun getItemCount(): Int {
-        return itemList.size
+        return chatList.size
     }
-
-    override fun getItemViewType(position: Int): Int {
-        return itemList[position].type
-    }
-
 
 
 }

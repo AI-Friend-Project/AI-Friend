@@ -5,7 +5,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.aifriend.data.ChatData
+import com.example.aifriend.recycler.ChatAdapter
 
 class ChatFragment : Fragment() {
 
@@ -20,6 +23,11 @@ class ChatFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_chat, container, false)
+        val view = inflater.inflate(R.layout.fragment_chat, container, false)
+        val chatRecyclerView = view.findViewById<RecyclerView>(R.id.chatFragmentRecyclerView)
+        chatRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        chatRecyclerView.adapter = ChatAdapter()
+
+        return view
     }
 }
