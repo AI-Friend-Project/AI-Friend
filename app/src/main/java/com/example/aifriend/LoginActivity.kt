@@ -17,6 +17,7 @@ class LoginActivity : AppCompatActivity(){
     //뒤로가기 종료
     var mBackWait:Long = 0
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -106,6 +107,16 @@ class LoginActivity : AppCompatActivity(){
         //fav 컬렉션의 해당 관심사 문서 안 필드배열에 사용자 이메일 추가
         MyApplication.db.collection("fav").document("AI친구")
             .update("users", FieldValue.arrayUnion(email))
+
+        //user 컬렉션 안 사용자 문서에 fav array 추가
+        MyApplication.db.collection("user").document(email)
+            .update("fav", FieldValue.arrayUnion("AI친구"))
+
+        MyApplication.db.collection("user").document(email)
+            .update("friends", FieldValue.arrayUnion(""))
+
+        MyApplication.db.collection("user").document(email)
+            .update("request", FieldValue.arrayUnion(""))
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -114,7 +125,9 @@ class LoginActivity : AppCompatActivity(){
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd, HH:mm:ss")
         val nowTime = currentTime.format(formatter)
         var message = "알림 메세지는 이 곳에 표시됩니다."
+        var type = "system"
         val notification = mapOf(
+            "type" to type,
             "content" to message,
             "time" to nowTime.toString()
         )

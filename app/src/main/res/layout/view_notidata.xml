@@ -6,19 +6,15 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="상세화면"/>
+        android:id="@+id/noti_content"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/favNameView"
-        android:textSize="30dp"/>
-    <TextView
+        android:id="@+id/noti_time"/>
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="친구 추천"
-        android:textSize="20dp"/>
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/usersRecyclerView"/>
+        android:text="수락하기"
+        android:visibility="gone"
+        android:id="@+id/acceptBtn"/>
 </LinearLayout>
