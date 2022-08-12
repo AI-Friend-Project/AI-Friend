@@ -1,10 +1,10 @@
 <component name="libraryTable">
   <library name="Gradle: com.google.android.gms:play-services-ads-identifier:18.0.0@aar">
     <CLASSES>
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/45fbffdcddf8de1727c64e1928c74bd8/transformed/play-services-ads-identifier-18.0.0/res" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/9614e481eb0bc836fb1a07603d031969/transformed/play-services-ads-identifier-18.0.0/AndroidManifest.xml" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/9614e481eb0bc836fb1a07603d031969/transformed/play-services-ads-identifier-18.0.0/res" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/9614e481eb0bc836fb1a07603d031969/transformed/play-services-ads-identifier-18.0.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/75dc8241f38f697bfb33b6fbad81a11a/transformed/play-services-ads-identifier-18.0.0/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/75dc8241f38f697bfb33b6fbad81a11a/transformed/play-services-ads-identifier-18.0.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/75dc8241f38f697bfb33b6fbad81a11a/transformed/play-services-ads-identifier-18.0.0/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.android.gms/play-services-ads-identifier/18.0.0/71d2e97dbe034b36f64b28491590ec2b2ec324e3/play-services-ads-identifier-18.0.0-javadoc.jar!/" />
