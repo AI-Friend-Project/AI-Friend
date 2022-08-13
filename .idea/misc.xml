@@ -13,6 +13,7 @@
         <entry key="app/src/main/res/layout/item_chat.xml" value="0.1" />
         <entry key="app/src/main/res/layout/item_msgbox.xml" value="0.1" />
         <entry key="app/src/main/res/layout/receiver_msgbox.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/sender_msgbox.xml" value="0.13229166666666667" />
       </map>
     </option>
   </component>

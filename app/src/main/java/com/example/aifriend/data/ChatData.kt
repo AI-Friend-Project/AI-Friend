@@ -1,9 +1,9 @@
 package com.example.aifriend.data
 
 data class ChatData(
-    val lastChat: String? = null,
+    var lastChat: String? = null,
     val uid: ArrayList<String?>? = null,
-    val name: String? = null,
+    var name: String? = null,
     var key: String? = null)
     /*val users: HashMap<String, Boolean> = HashMap(),
     val comments : HashMap<String, Comment> = HashMap()) {

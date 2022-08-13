@@ -1,6 +1,7 @@
 package com.example.aifriend.recycler
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,22 +13,29 @@ import com.example.aifriend.R
 import com.example.aifriend.data.ChatData
 import com.example.aifriend.data.ChatRoomData
 import com.example.aifriend.data.OtherUser
+import com.example.aifriend.data.ViewType
+import com.example.aifriend.databinding.ReceiverMsgboxBinding
+import com.example.aifriend.databinding.SenderMsgboxBinding
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 
 
-class ChatRoomAdapter: RecyclerView.Adapter<ChatRoomAdapter.ViewHolder>() {
+class ChatRoomAdapter(fieldPath: String): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val comments = ArrayList<ChatRoomData>()
     private var otherUser : OtherUser? = null
-    var fireStore: FirebaseFirestore? = null
+    private var fireStore: FirebaseFirestore? = null
     private var uid : String? = Firebase.auth.currentUser?.uid.toString()
 
     init {
         fireStore = FirebaseFirestore.getInstance()
 
-        fireStore?.collection("")
+        fireStore?.collection("ChatRoomList")
+            ?.document(fieldPath)
+            ?.collection("Chats")
+            ?.orderBy("time",Query.Direction.ASCENDING)
             ?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                 // ArrayList 비워줌
                 comments.clear()
@@ -35,26 +43,48 @@ class ChatRoomAdapter: RecyclerView.Adapter<ChatRoomAdapter.ViewHolder>() {
                 for (snapshot in querySnapshot!!.documents) {
                     var item = snapshot.toObject<ChatRoomData>()
                     comments.add(item!!)
+
                 }
             }
         notifyDataSetChanged()
 
+
     }
 
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_msgbox, parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == ViewType.SENDER) {
+            SenderViewHolder(
+                SenderMsgboxBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            )
+        } else {
+            ReceiverViewHolder(
+                ReceiverMsgboxBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            )
+        }
     }
 
     //뷰 홀더 설정
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val nameTextView: TextView = view.findViewById(R.id.nameTextView)
-        val msgTextView: TextView = view.findViewById(R.id.msgTextView)
-        val timeTextView: TextView = view.findViewById(R.id.timeTextView)
-        val senderMsgTextView: TextView = view.findViewById(R.id.senderMsgTextView)
-        val senderTimeTextView: TextView = view.findViewById(R.id.senderTimeTextView)
-        val sender: RelativeLayout = view.findViewById(R.id.sender)
-        val receiver: RelativeLayout = view.findViewById(R.id.receiver)
+    class SenderViewHolder(binding: SenderMsgboxBinding) : RecyclerView.ViewHolder(binding.root) {
+        var msgTextView = binding.msgTextView
+        var timeTextView = binding.timeTextView
+
+        fun bind(item: ChatRoomData) {
+            msgTextView.text = item.message
+            timeTextView.text = item.time
+        }
+    }
+
+    class ReceiverViewHolder(binding: ReceiverMsgboxBinding) : RecyclerView.ViewHolder(binding.root) {
+        private val msgTextView = binding.msgTextView
+        private val timeTextView = binding.timeTextView
+        private val nameTextView = binding.nameTextView
+
+        fun bind(item: ChatRoomData) {
+            msgTextView.text = item.message
+            timeTextView.text = item.time
+            nameTextView.text = item.name
+        }
 
     }
 
@@ -63,26 +93,31 @@ class ChatRoomAdapter: RecyclerView.Adapter<ChatRoomAdapter.ViewHolder>() {
 
     @SuppressLint("WrongConstant")
     @RequiresApi(31)
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
         if(uid?.equals(comments[position].uid) == true) {
-            holder.sender.visibility = View.VISIBLE
-            holder.receiver.visibility = View.INVISIBLE
-            //holder.senderMsgTextView.text = comments[position].message
-            //holder.senderTimeTextView.text = comments[position].time
+            comments[position].message?.let { Log.i("qqq11", it) }
+
+            (holder as SenderViewHolder).bind(comments[position])
+
         }
         else {
-            holder.sender.visibility = View.INVISIBLE
-            holder.receiver.visibility = View.VISIBLE
-            holder.nameTextView.text = comments[position].uid.toString()
-           // holder.msgTextView.text = comments[position].message
-           // holder.timeTextView.text = comments[position].time
+            (holder as ReceiverViewHolder).bind(comments[position])
+
         }
 
     }
 
     override fun getItemCount(): Int {
         return comments.size
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return if(uid?.equals(comments[position].uid) == true) {
+            1
+        } else {
+            2
+        }
     }
 
 }
