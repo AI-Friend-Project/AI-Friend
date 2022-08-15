@@ -66,7 +66,13 @@ class ChatAdapter: RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
     @RequiresApi(31)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 
-        holder.chatTitleTextView.text = chatList[position].name
+        // 계정에 따라 상대방 이름 다르게 보이기
+        if(chatList[position].uid?.get(0) == uid) {
+            holder.chatTitleTextView.text = chatList[position].name?.get(1)
+        }
+        else {
+            holder.chatTitleTextView.text = chatList[position].name?.get(0)
+        }
         holder.chatMessageTextView.text = chatList[position].lastChat
 
         //채팅창 선책 시 이동

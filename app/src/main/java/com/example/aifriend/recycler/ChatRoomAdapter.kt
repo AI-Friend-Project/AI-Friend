@@ -1,11 +1,8 @@
 package com.example.aifriend.recycler
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +18,9 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 class ChatRoomAdapter(fieldPath: String): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -86,6 +86,7 @@ class ChatRoomAdapter(fieldPath: String): RecyclerView.Adapter<RecyclerView.View
             nameTextView.text = item.name
         }
 
+
     }
 
     //receiver 뷰 홀더 설정
@@ -120,3 +121,9 @@ class ChatRoomAdapter(fieldPath: String): RecyclerView.Adapter<RecyclerView.View
     }
 
 }
+/*
+fun calculateTime(time: Long): String {
+    val dateFormat = SimpleDateFormat("MM/dd. hh:mm")
+
+    return dateFormat.format(Date(time)).toString()
+}*/
