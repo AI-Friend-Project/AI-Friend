@@ -24,7 +24,7 @@ import com.google.firebase.ktx.Firebase
 
 
 class ChatRoomAdapter(fieldPath: String): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private val comments = ArrayList<ChatRoomData>()
+    private var comments = ArrayList<ChatRoomData>()
     private var otherUser : OtherUser? = null
     private var fireStore: FirebaseFirestore? = null
     private var uid : String? = Firebase.auth.currentUser?.uid.toString()
@@ -43,10 +43,10 @@ class ChatRoomAdapter(fieldPath: String): RecyclerView.Adapter<RecyclerView.View
                 for (snapshot in querySnapshot!!.documents) {
                     var item = snapshot.toObject<ChatRoomData>()
                     comments.add(item!!)
-
                 }
+                notifyDataSetChanged()
+
             }
-        notifyDataSetChanged()
 
 
     }
@@ -76,9 +76,9 @@ class ChatRoomAdapter(fieldPath: String): RecyclerView.Adapter<RecyclerView.View
     }
 
     class ReceiverViewHolder(binding: ReceiverMsgboxBinding) : RecyclerView.ViewHolder(binding.root) {
-        private val msgTextView = binding.msgTextView
-        private val timeTextView = binding.timeTextView
-        private val nameTextView = binding.nameTextView
+        private var msgTextView = binding.msgTextView
+        private var timeTextView = binding.timeTextView
+        private var nameTextView = binding.nameTextView
 
         fun bind(item: ChatRoomData) {
             msgTextView.text = item.message
@@ -96,7 +96,6 @@ class ChatRoomAdapter(fieldPath: String): RecyclerView.Adapter<RecyclerView.View
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
         if(uid?.equals(comments[position].uid) == true) {
-            comments[position].message?.let { Log.i("qqq11", it) }
 
             (holder as SenderViewHolder).bind(comments[position])
 

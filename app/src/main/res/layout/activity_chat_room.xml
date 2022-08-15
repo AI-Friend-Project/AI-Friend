@@ -33,9 +33,7 @@
             android:hint="Type the message"
             android:inputType="textMultiLine"
             android:padding="10dp"
-            android:maxLines="3">
-            <requestFocus />
-        </EditText>
+            android:maxLines="3"/>
 
         <Button
             android:id="@+id/chatSendButton"

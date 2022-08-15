@@ -34,8 +34,8 @@ class ChatRoomActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityChatRoomBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val chatEditText = findViewById<EditText>(R.id.chatEditText)
-        val chatSendButton = findViewById<Button>(R.id.chatSendButton)
+        val chatEditText = binding.chatEditText
+        val chatSendButton = binding.chatSendButton
 
         val time = System.currentTimeMillis()
         val dateFormat = SimpleDateFormat("MM/dd. hh:mm")
@@ -43,33 +43,32 @@ class ChatRoomActivity : AppCompatActivity() {
 
         destinationUid = intent.getStringExtra("destinationUid")
         uid = Firebase.auth.currentUser?.uid.toString()
-        recyclerView = findViewById(R.id.chatRoomActivityRecyclerView)
+        recyclerView = binding.chatRoomActivityRecyclerView
+
 
         val fieldPathUid: String = destinationUid!!.split("/")[1]
         chatAdapter = ChatRoomAdapter(fieldPathUid)
+        chatRoom()
 
-        chatRoom(fieldPathUid)
-        hideKeyboard()
 
         // 채팅 보내기
         chatSendButton.setOnClickListener {
-            Log.i("qqq11", "클릭$destinationUid")
             val chat = ChatRoomData(uid, chatEditText.text.toString(), curTime, uid)
             recyclerView?.scrollToPosition(chatAdapter.itemCount - 1)
             //수정 작업 필요
             var chatDataMap = mutableMapOf<String,Any>()
             chatDataMap["key"] = destinationUid.toString()
             chatDataMap["lastChat"] = chatEditText.text.toString()
-            Log.i("qqq11", "ff$fieldPathUid")
 
             //저장
-           // if(chatRoomUid == null) {
+            if(chatRoomUid == null) {
                 fireStore.collection("ChatRoomList")
                     .document(fieldPathUid)
                     .update(chatDataMap)
                     .addOnSuccessListener {
+                        chatRoom()
 
-                       // Handler().postDelayed({
+                        // Handler().postDelayed({
                         if (fieldPathUid != null) {
                             fireStore.collection("ChatRoomList")
                                 .document(fieldPathUid)
@@ -78,10 +77,8 @@ class ChatRoomActivity : AppCompatActivity() {
                         }
                         chatEditText.text = null
                    // }, 100L)
-                    chatRoom(fieldPathUid)
-
                 }
-            /*}
+            }
             else {
                 if (fieldPathUid != null) {
                     fireStore.collection("ChatRoomList")
@@ -90,55 +87,17 @@ class ChatRoomActivity : AppCompatActivity() {
                         .add(chat)
                 }
                 chatEditText.text = null
-                Log.i("qqq11", "2채팅2")
-
-            }*/
+            }
+            recyclerView?.scrollToPosition(chatAdapter.itemCount - 1)
         }
-        chatRoom(fieldPathUid)
+        chatRoom()
+
     }
-    private fun chatRoom(fieldPath: String) {
+    private fun chatRoom() {
+
         recyclerView?.layoutManager = LinearLayoutManager(this@ChatRoomActivity, LinearLayoutManager.VERTICAL, false)
         recyclerView?.adapter = chatAdapter
         recyclerView?.scrollToPosition(chatAdapter.itemCount - 1)
-
-    }
-    private fun checkChatRoom(fieldPathUid: String) {
-        Log.i("qqq11", "222")
-
-        fireStore.collection("ChatRoomList")
-            .document(fieldPathUid)
-            .collection("Chats")
-            ?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
-
-                for (snapshot in querySnapshot!!.documents) {
-                    var item = snapshot.toObject<ChatData>()
-                    Log.i("qqq11", "$item")
-
-                    if(destinationUid?.let { item?.uid!!.contains(it) } == true) {
-                        chatRoomUid = item?.key
-
-                       // recyclerView?.layoutManager = LinearLayoutManager(this)
-                        //recyclerView?.adapter = ChatRoomAdapter()
-
-
-
-                    }
-
-                }
-            }
-    }
-    fun hideKeyboard() {
-        val imm2 = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm2.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        destinationUid = intent.getStringExtra("destinationUid")
-        val fieldPathUid: String = destinationUid!!.split("/")[1]
-
-        chatRoom(fieldPathUid)
-        chatAdapter.notifyDataSetChanged()
     }
 
 }
