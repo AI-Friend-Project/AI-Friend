@@ -16,36 +16,35 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import androidx.recyclerview.widget.DiffUtil as Diff
 
-
-class ChatAdapter: RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
+class AiChatAdapter : RecyclerView.Adapter<AiChatAdapter.ViewHolder>() {
     private val chatList = ArrayList<ChatData>()
     private var uid : String? = null
     private var fireStore: FirebaseFirestore? = null
     private val destinationUsers: ArrayList<String> = arrayListOf()
 
     init {
-
         uid = Firebase.auth.currentUser?.uid.toString()
+        Log.i("qqq11", "2dd")
 
         fireStore = FirebaseFirestore.getInstance()
 
-        fireStore?.collection("ChatRoomList")
+        fireStore?.collection("AIChat")
             ?.whereArrayContains("uid", uid!!)
             ?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                 // ArrayList 비워줌
                 chatList.clear()
+                Log.i("qqq11", querySnapshot!!.documents.toString())
 
                 for (snapshot in querySnapshot!!.documents) {
                     var item = snapshot.toObject<ChatData>()
-                    item?.key = "ChatRoomList/" + snapshot.id
+                    item?.key = "AIChat/" + snapshot.id
+                    Log.i("qqq11", "dd")
                     chatList.add(item!!)
                 }
                 notifyDataSetChanged()
 
             }
-
 
         // DiffUtil 로 갱신 해보기
 
@@ -68,16 +67,9 @@ class ChatAdapter: RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
     @SuppressLint("WrongConstant")
     @RequiresApi(31)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        Log.i("qqq11", position.toString())
 
-
-        // 계정에 따라 상대방 이름 다르게 보이기
-        if(chatList[position].uid?.get(0) == uid) {
-            holder.chatTitleTextView.text = chatList[position].name?.get(1)
-        }
-        else {
-            holder.chatTitleTextView.text = chatList[position].name?.get(0)
-        }
+        // AI
+        holder.chatTitleTextView.text = chatList[position].name?.get(1)
         holder.chatMessageTextView.text = chatList[position].lastChat
 
         //채팅창 선책 시 이동

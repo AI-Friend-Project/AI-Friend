@@ -23,7 +23,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class ChatRoomAdapter(fieldPath: String): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class ChatRoomAdapter(collectionPath: String,fieldPath: String): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var comments = ArrayList<ChatRoomData>()
     private var otherUser : OtherUser? = null
     private var fireStore: FirebaseFirestore? = null
@@ -32,7 +32,7 @@ class ChatRoomAdapter(fieldPath: String): RecyclerView.Adapter<RecyclerView.View
     init {
         fireStore = FirebaseFirestore.getInstance()
 
-        fireStore?.collection("ChatRoomList")
+        fireStore?.collection(collectionPath)
             ?.document(fieldPath)
             ?.collection("Chats")
             ?.orderBy("time",Query.Direction.ASCENDING)
