@@ -37,6 +37,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var drawerLayout: DrawerLayout
     lateinit var navigationView: NavigationView
 
+    lateinit var chat1: ChatFragment
+
     //뒤로가기 종료
     var mBackWait:Long = 0
 
@@ -77,8 +79,10 @@ class MainActivity : AppCompatActivity() {
         tab2 = Tab2()
         tab3 = Tab3()
 
+        chat1 = ChatFragment()
+
         //초기 탭 회면
-        supportFragmentManager.beginTransaction().add(R.id.frameLayout, tab1).commit()
+        supportFragmentManager.beginTransaction().add(R.id.frameLayout, chat1).commit()
         //탭 선택시 프래그먼트 전환
         binding.mainTabMenu.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener{
             override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -90,7 +94,7 @@ class MainActivity : AppCompatActivity() {
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 when(tab?.position){
                     0 -> {
-                        supportFragmentManager.beginTransaction().replace(R.id.frameLayout, tab1).commit()
+                        supportFragmentManager.beginTransaction().replace(R.id.frameLayout, chat1).commit()
                     }
                     1 -> {
                         supportFragmentManager.beginTransaction().replace(R.id.frameLayout, tab2).commit()
