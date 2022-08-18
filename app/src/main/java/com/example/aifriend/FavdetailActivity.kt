@@ -1,17 +1,25 @@
 package com.example.aifriend
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.aifriend.data.favData
 import com.example.aifriend.data.userData
 import com.example.aifriend.databinding.ActivityFavdetailBinding
+import com.example.aifriend.recycler.BoardAdapter
 import com.example.aifriend.recycler.favDetailAdapter
 import com.example.aifriend.recycler.tab2Adapter
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 @RequiresApi(Build.VERSION_CODES.O)
 class FavdetailActivity : AppCompatActivity() {
@@ -20,15 +28,51 @@ class FavdetailActivity : AppCompatActivity() {
     private var itemList : MutableList<userData> = ArrayList()
     private var userCount : Int = 0
 
+    //게시물
+    private val boardAdapter = BoardAdapter { clickBoardItem ->
+    }
+    private val startForResult =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == 2000) {
+                intent.getStringExtra("favName")?.let {
+                    getBoardData(it)
+                }
+            }
+        }
+
+
     override fun onCreate (savedInstanceState: Bundle?){
         binding = ActivityFavdetailBinding.inflate(layoutInflater)
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
+        //툴바
+        val toolbar = binding.mainToolbar as androidx.appcompat.widget.Toolbar
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.title = intent.getStringExtra("favName").orEmpty()
+
         var favName = intent.getStringExtra("favName")
         binding.favNameView.text = favName
 
         getFavUsers(favName.toString())
+
+        //게시물
+        binding.rvBoard.adapter = boardAdapter
+
+        //툴바로 위치 옮겨야됨
+        binding.fab.setOnClickListener {
+            startForResult.launch(
+                Intent(this, AddBoardActivity::class.java).apply {
+                    putExtra("favorite", intent.getStringExtra("favName"))
+                }
+            )
+        }
+
+        intent.getStringExtra("favName")?.let {
+            getBoardData(it)
+            Log.d("tag", "intent: ${it}")
+        }
     }
 
     //필요없을수도
@@ -120,11 +164,63 @@ class FavdetailActivity : AppCompatActivity() {
         Log.d("tag", "pre item count: ${itemList.count()}, user count: ${userCount}")
         if(itemList.count() == userCount){ //친구추천목록 안뜨면 여기 문제임
             Log.d("tag", "item count: ${itemList.count()}, user count: ${userCount}")
+            //가로스크롤
             binding.usersRecyclerView.layoutManager = LinearLayoutManager(this)
+                .also { it.orientation = LinearLayoutManager.HORIZONTAL }
             binding.usersRecyclerView.adapter = favDetailAdapter(this, itemList)
         }
     }
 
+    //툴바 뒤로가기
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item!!.itemId){
+            android.R.id.home -> {
+                finish()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
+    //게시물 부분
+    private fun getBoardData(favorite: String) {
+        MyApplication.db.collection("Board").document(favorite).get().addOnCompleteListener {
+            if (it.isSuccessful) {
+                if (it.result.exists()) {
+                    val getResult: java.util.ArrayList<HashMap<String, String>>? =
+                        it.result.get("list") as java.util.ArrayList<HashMap<String, String>>?
+                    val toResultList = getResult?.map { it.toBoardData() }
+                    if (!toResultList.isNullOrEmpty()) {
+                        boardAdapter.addAll(toResultList)
+                    }
+                } else {
+                    createBoardCollect(favorite)
+                }
+            }
+        }
+    }
 
+    private fun createBoardCollect(favorite: String) {
+        MyApplication.db.collection("Board").document(favorite).set(emptyMap<String, BoardData>())
+    }
 }
+
+//따로 파일로 빼기
+data class BoardData(
+    val title: String,
+    val content: String,
+    val name: String,
+    val time: String = SimpleDateFormat("yyyyMMdd").format(Calendar.getInstance().time)
+) {
+    fun translateYear(): String {
+        return "${time.substring(0, 4)}/${time.substring(4, 6)}/${time.substring(6, 8)}"
+    }
+}
+
+
+fun HashMap<String, String>.toBoardData(): BoardData =
+    BoardData(
+        title = getValue("title"),
+        content = getValue("content"),
+        name = getValue("name"),
+        time = getValue("time")
+    )

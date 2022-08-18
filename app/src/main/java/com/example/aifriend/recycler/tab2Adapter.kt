@@ -2,9 +2,11 @@ package com.example.aifriend.recycler
 
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aifriend.FavdetailActivity
@@ -23,6 +25,7 @@ class tab2Adapter (val context: Context, val itemList: List<favData>): RecyclerV
         return MyViewHolder(ViewFavdataBinding.inflate(layoutInflater))
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val data = itemList.get(position)
         holder.bind(itemList[position])

@@ -16,7 +16,7 @@ class navAdapter(val context: Context, val itemList: List<userData>): RecyclerVi
             binding.emailView.text = data.email
         }
         init {
-            //친구 누르면 채팅 시작하기
+            binding.textBtn.setOnClickListener {  } //채팅시작
         }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): navAdapter.MyViewHolder {

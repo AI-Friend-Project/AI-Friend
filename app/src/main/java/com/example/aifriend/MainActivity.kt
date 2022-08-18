@@ -19,6 +19,7 @@ import com.example.aifriend.databinding.FragmentTab1Binding
 import com.example.aifriend.databinding.HeaderBinding
 import com.example.aifriend.recycler.favDetailAdapter
 import com.example.aifriend.recycler.navAdapter
+import com.example.aifriend.recycler.notificationAdapter
 import com.example.aifriend.recycler.tab2Adapter
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
@@ -111,6 +112,8 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item!!.itemId){
             android.R.id.home -> {
+                friendsCount = 0
+                itemList.clear()
                 drawerLayout.openDrawer(GravityCompat.START)
                 getInformation()
                 getFriendsList()
@@ -142,22 +145,6 @@ class MainActivity : AppCompatActivity() {
             }.addOnFailureListener{ exception ->
                 Toast.makeText(this, "서버로부터 데이터 획득에 실패했습니다.", Toast.LENGTH_SHORT).show()
             }
-        /*MyApplication.db.collection("fav")
-            .get()
-            .addOnSuccessListener { result ->
-                val itemList = mutableListOf<favData>()
-                for (document in result){
-                    val item = document.toObject(favData::class.java)
-                    item.docId = document.id
-                    itemList.add(item)
-                }
-                binding.navRecyclerView.layoutManager = LinearLayoutManager(this)
-                binding.navRecyclerView.adapter = tab2Adapter(this, itemList)
-            }.addOnFailureListener { exception ->
-                Toast.makeText(this, "서버로부터 데이터 획득에 실패했습니다.", Toast.LENGTH_SHORT).show()
-            }
-
-         */
     }
     private fun makeRecyclerView(friendsList: List<String>){
         friendsCount = friendsList.count()
@@ -186,6 +173,7 @@ class MainActivity : AppCompatActivity() {
             Log.d("tag", "item count: ${itemList.count()}, user count: ${friendsCount}")
             binding.navRecyclerView.layoutManager = LinearLayoutManager(this)
             binding.navRecyclerView.adapter = navAdapter(this, itemList)
+            //itemList.clear()
         }
     }
 
