@@ -39,6 +39,7 @@ class Tab2 : Fragment() {
     private fun makeRecyclerView(email: String){
         MyApplication.db.collection("fav")
             //관심사 항목 안 users에 사용자 이메일이 추가되어 있는지 확인
+            //user 에 fav 리스트 불러와도 될 거 같음
             .whereArrayContainsAny("users", listOf(email))
             .get()
             .addOnSuccessListener { result ->
