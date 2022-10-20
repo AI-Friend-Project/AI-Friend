@@ -2,18 +2,27 @@ package com.example.aifriend
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import com.example.aifriend.data.ChatData
 import com.example.aifriend.databinding.ActivityJoinBinding
 import com.example.aifriend.databinding.ActivityLoginBinding
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 class LoginActivity : AppCompatActivity(){
     lateinit var binding: ActivityLoginBinding
     lateinit var binding2: ActivityJoinBinding
+    private val chatList = ArrayList<ChatData>()
+    private var uid : String? = null
+    private var fireStore: FirebaseFirestore? = null
     //뒤로가기 종료
     var mBackWait:Long = 0
 
@@ -42,6 +51,7 @@ class LoginActivity : AppCompatActivity(){
                             MyApplication.auth.currentUser?.sendEmailVerification()
                                 ?.addOnCompleteListener { sendTask ->
                                     if(sendTask.isSuccessful){
+                                        setAI()
                                         Toast.makeText(baseContext, "회원가입에 성공하였습니다. 전송된 메일을 확인해 주세요.",
                                             Toast.LENGTH_SHORT).show()
                                         //파이어스토어 문서 생성
@@ -144,6 +154,39 @@ class LoginActivity : AppCompatActivity(){
         } else {
             finishAffinity()
         }
+    }
+
+    private fun setAI(){
+        uid = Firebase.auth.currentUser?.uid.toString()
+
+
+        fireStore = FirebaseFirestore.getInstance()
+//key, lastChat, name[2], uid
+        /*
+        key : AIChat/{문서 id}
+        lastChat : 최근 채팅
+        name[2]: AI , AI
+         */
+        val newChat = fireStore?.collection("AIChat")?.document()
+
+        val docKey = "AIChat/" + newChat?.id
+        val names = arrayListOf<String>("AI", "AI")
+        val users = arrayListOf<String>(uid!!)
+
+        Log.i("as", uid!!)
+        Log.i("as", docKey )
+        Log.i("as", names.toString())
+        val data = hashMapOf(
+            "key" to docKey,
+            "lastChat" to "Hi",
+            "name" to names,
+            "uid" to users,
+        )
+
+        Log.i("as", data.toString())
+
+        newChat?.set(data)
+
     }
 
 }

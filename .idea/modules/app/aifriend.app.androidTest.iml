@@ -176,5 +176,4 @@
     <orderEntry type="library" scope="TEST" name="Gradle: androidx.browser:browser:1.4.0@aar" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: com.google.android.gms:play-services-safetynet:17.0.0@aar" level="project" />
   </component>
-  <component name="TestModuleProperties" production-module="aifriend.app.main" />
 </module>
