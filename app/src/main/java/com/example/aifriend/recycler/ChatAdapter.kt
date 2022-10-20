@@ -18,7 +18,7 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import androidx.recyclerview.widget.DiffUtil as Diff
 
-
+// 채팅방 리스트 어댑터
 class ChatAdapter: RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
     private val chatList = ArrayList<ChatData>()
     private var uid : String? = null

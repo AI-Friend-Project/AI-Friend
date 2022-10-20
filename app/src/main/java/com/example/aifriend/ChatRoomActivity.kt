@@ -76,8 +76,8 @@ class ChatRoomActivity : AppCompatActivity() {
                                 .add(chat)
                         }
                         chatEditText.text = null
-                   // }, 100L)
-                }
+                        // }, 100L)
+                    }
             }
             else {
                 if (fieldPathUid != null) {

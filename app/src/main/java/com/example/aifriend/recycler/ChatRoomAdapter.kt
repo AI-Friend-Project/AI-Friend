@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-
+// 채팅방 안에 리스트
 class ChatRoomAdapter(collectionPath: String,fieldPath: String): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var comments = ArrayList<ChatRoomData>()
     private var otherUser : OtherUser? = null

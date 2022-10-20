@@ -17,6 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 
+// AI와 채팅
 class AiChatAdapter : RecyclerView.Adapter<AiChatAdapter.ViewHolder>() {
     private val chatList = ArrayList<ChatData>()
     private var uid : String? = null
@@ -25,8 +26,8 @@ class AiChatAdapter : RecyclerView.Adapter<AiChatAdapter.ViewHolder>() {
 
     init {
         uid = Firebase.auth.currentUser?.uid.toString()
-        Log.i("qqq11", "2dd")
 
+        Log.i("as", uid!!)
         fireStore = FirebaseFirestore.getInstance()
 
         fireStore?.collection("AIChat")
@@ -39,7 +40,6 @@ class AiChatAdapter : RecyclerView.Adapter<AiChatAdapter.ViewHolder>() {
                 for (snapshot in querySnapshot!!.documents) {
                     var item = snapshot.toObject<ChatData>()
                     item?.key = "AIChat/" + snapshot.id
-                    Log.i("qqq11", "dd")
                     chatList.add(item!!)
                 }
                 notifyDataSetChanged()
