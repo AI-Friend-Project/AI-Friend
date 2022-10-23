@@ -11,6 +11,9 @@ import com.example.aifriend.data.ChatData
 import com.example.aifriend.recycler.AiChatAdapter
 import com.example.aifriend.recycler.ChatAdapter
 
+/**
+ * 채팅방 리스트 프래그먼트
+ */
 class ChatFragment : Fragment() {
 
     private val chatList = ArrayList<ChatData>()
@@ -28,6 +31,7 @@ class ChatFragment : Fragment() {
         val aiChatRecyclerView = view.findViewById<RecyclerView>(R.id.aiChatRecyclerView)
         val chatRecyclerView = view.findViewById<RecyclerView>(R.id.chatFragmentRecyclerView)
 
+        // AI 채팅방, 상대 채팅방 띄우기
         aiChatRecyclerView.layoutManager = LinearLayoutManager(context)
         chatRecyclerView.layoutManager = LinearLayoutManager(context)
 

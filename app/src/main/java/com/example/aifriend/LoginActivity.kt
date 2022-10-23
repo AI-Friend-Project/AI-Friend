@@ -156,35 +156,24 @@ class LoginActivity : AppCompatActivity(){
         }
     }
 
+    // 각 유저마다 AI 채팅방 생성
     private fun setAI(){
-        uid = Firebase.auth.currentUser?.uid.toString()
-
-
+        uid = Firebase.auth.currentUser?.uid.toString()     // uid 받아오기
         fireStore = FirebaseFirestore.getInstance()
-//key, lastChat, name[2], uid
-        /*
-        key : AIChat/{문서 id}
-        lastChat : 최근 채팅
-        name[2]: AI , AI
-         */
-        val newChat = fireStore?.collection("AIChat")?.document()
+        val newChat = fireStore?.collection("AIChat")?.document()   // AI Chat 컬렉션에 문서생성 (문서 id는 랜덤으로 생성)
 
-        val docKey = "AIChat/" + newChat?.id
-        val names = arrayListOf<String>("AI", "AI")
-        val users = arrayListOf<String>(uid!!)
+        val docKey = "AIChat/" + newChat?.id    // 문서 id 받아오기
+        val names = arrayListOf<String>("AI", "AI") // name : AI 로 설정 - 채팅방 리스트에 AI 라고 뜨도록
+        val users = arrayListOf<String>(uid!!)  //  사용자 uid 받아옴 - 각 사용자마다 문서가 생성되므로
 
-        Log.i("as", uid!!)
-        Log.i("as", docKey )
-        Log.i("as", names.toString())
+        // hashMap data 초기화
         val data = hashMapOf(
             "key" to docKey,
-            "lastChat" to "Hi",
+            "lastChat" to "대화를 시작해보세요.",
             "name" to names,
             "uid" to users,
         )
-
-        Log.i("as", data.toString())
-
+        // 데이터 추가
         newChat?.set(data)
 
     }

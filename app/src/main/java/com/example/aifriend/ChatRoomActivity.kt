@@ -16,6 +16,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.reflect.typeOf
 
+/**
+ * 채팅 화면 프래그먼트
+ */
 class ChatRoomActivity : AppCompatActivity() {
     private lateinit var binding: ActivityChatRoomBinding
     private lateinit var chatAdapter: ChatRoomAdapter
@@ -43,15 +46,18 @@ class ChatRoomActivity : AppCompatActivity() {
         uid = Firebase.auth.currentUser?.uid.toString()
         recyclerView = binding.chatRoomActivityRecyclerView
 
-        Log.i("qqq11", destinationUid.toString())
-
         val collectionPath : String = destinationUid!!.split("/")?.get(0)
         val fieldPathUid: String = destinationUid!!.split("/")?.get(1)
+
+        /**
+         * 채팅 띄우기
+         **/
         chatAdapter = ChatRoomAdapter(collectionPath,fieldPathUid)
         chatRoom()
 
-
-        // 채팅 보내기
+        /**
+         *  채팅 보내기
+         **/
         chatSendButton.setOnClickListener {
             val chat = ChatRoomData(uid, chatEditText.text.toString(), curTime, uid)
             recyclerView?.scrollToPosition(chatAdapter.itemCount - 1)

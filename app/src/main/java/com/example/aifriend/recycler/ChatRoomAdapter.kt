@@ -22,7 +22,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-// 채팅방 안에 리스트
+/**
+ * 채팅방 안에 리스트
+ */
 class ChatRoomAdapter(collectionPath: String,fieldPath: String): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var comments = ArrayList<ChatRoomData>()
     private var otherUser : OtherUser? = null
@@ -32,6 +34,7 @@ class ChatRoomAdapter(collectionPath: String,fieldPath: String): RecyclerView.Ad
     init {
         fireStore = FirebaseFirestore.getInstance()
 
+        // 채팅 목록 가져오기
         fireStore?.collection(collectionPath)
             ?.document(fieldPath)
             ?.collection("Chats")
@@ -54,10 +57,12 @@ class ChatRoomAdapter(collectionPath: String,fieldPath: String): RecyclerView.Ad
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == ViewType.SENDER) {
+            // 사용자 쪽 채팅 레이아웃 설정
             SenderViewHolder(
                 SenderMsgboxBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             )
         } else {
+            // 상대방 쪽 채팅 레이아웃 설정
             ReceiverViewHolder(
                 ReceiverMsgboxBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             )
@@ -96,12 +101,13 @@ class ChatRoomAdapter(collectionPath: String,fieldPath: String): RecyclerView.Ad
     @RequiresApi(31)
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
+        // 사용자 uid 와 채팅 uid 가 같을 경우 -> sender
         if(uid?.equals(comments[position].uid) == true) {
-
+            // 사용자 쪽 채팅으로 설정
             (holder as SenderViewHolder).bind(comments[position])
 
         }
-        else {
+        else {  // 다를 경우 - 상대방 쪽 채팅으로 설정
             (holder as ReceiverViewHolder).bind(comments[position])
 
         }
