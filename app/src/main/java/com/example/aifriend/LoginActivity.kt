@@ -51,7 +51,7 @@ class LoginActivity : AppCompatActivity(){
                             MyApplication.auth.currentUser?.sendEmailVerification()
                                 ?.addOnCompleteListener { sendTask ->
                                     if(sendTask.isSuccessful){
-                                        setAI()
+                                        setAI()     // 회원가입 시 AI 채팅방 생성
                                         Toast.makeText(baseContext, "회원가입에 성공하였습니다. 전송된 메일을 확인해 주세요.",
                                             Toast.LENGTH_SHORT).show()
                                         //파이어스토어 문서 생성
@@ -156,7 +156,10 @@ class LoginActivity : AppCompatActivity(){
         }
     }
 
-    // 각 유저마다 AI 채팅방 생성
+    /**
+     * 각 유저마다 AI 채팅방 생성
+      */
+
     private fun setAI(){
         uid = Firebase.auth.currentUser?.uid.toString()     // uid 받아오기
         fireStore = FirebaseFirestore.getInstance()
