@@ -18,7 +18,9 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import androidx.recyclerview.widget.DiffUtil as Diff
 
-// 채팅방 리스트 어댑터
+/**
+ * 채팅방 리스트 어댑터
+ */
 class ChatAdapter: RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
     private val chatList = ArrayList<ChatData>()
     private var uid : String? = null
@@ -26,11 +28,11 @@ class ChatAdapter: RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
     private val destinationUsers: ArrayList<String> = arrayListOf()
 
     init {
-
         uid = Firebase.auth.currentUser?.uid.toString()
 
         fireStore = FirebaseFirestore.getInstance()
 
+        // 채팅방 리스트 불러오스
         fireStore?.collection("ChatRoomList")
             ?.whereArrayContains("uid", uid!!)
             ?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
@@ -68,8 +70,6 @@ class ChatAdapter: RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
     @SuppressLint("WrongConstant")
     @RequiresApi(31)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        Log.i("qqq11", position.toString())
-
 
         // 계정에 따라 상대방 이름 다르게 보이기
         if(chatList[position].uid?.get(0) == uid) {
