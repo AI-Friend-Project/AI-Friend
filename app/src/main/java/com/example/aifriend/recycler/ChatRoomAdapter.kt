@@ -1,6 +1,7 @@
 package com.example.aifriend.recycler
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
@@ -46,6 +47,9 @@ class ChatRoomAdapter(collectionPath: String,fieldPath: String): RecyclerView.Ad
                 for (snapshot in querySnapshot!!.documents) {
                     var item = snapshot.toObject<ChatRoomData>()
                     comments.add(item!!)
+                    Log.d("tag", item.toString())
+                    Log.d("tag", uid.toString())
+
                 }
                 notifyDataSetChanged()
 
@@ -71,7 +75,7 @@ class ChatRoomAdapter(collectionPath: String,fieldPath: String): RecyclerView.Ad
 
     //뷰 홀더 설정
     class SenderViewHolder(binding: SenderMsgboxBinding) : RecyclerView.ViewHolder(binding.root) {
-        var msgTextView = binding.msgTextView
+        private var msgTextView = binding.msgTextView
         var timeTextView = binding.timeTextView
 
         fun bind(item: ChatRoomData) {
@@ -89,6 +93,7 @@ class ChatRoomAdapter(collectionPath: String,fieldPath: String): RecyclerView.Ad
             msgTextView.text = item.message
             timeTextView.text = item.time
             nameTextView.text = item.name
+            item.name?.let { Log.d("tag", it) }
         }
 
 
@@ -111,6 +116,7 @@ class ChatRoomAdapter(collectionPath: String,fieldPath: String): RecyclerView.Ad
             (holder as ReceiverViewHolder).bind(comments[position])
 
         }
+
 
     }
 

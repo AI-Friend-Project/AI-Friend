@@ -99,9 +99,12 @@ class LoginActivity : AppCompatActivity(){
     }
     private fun documentCreate(email: String){
         var temp = email.split("@") //이메일 아이디 부분만 따오기
+        uid = Firebase.auth.currentUser?.uid.toString()     // uid 받아오기
+
         val userData = mapOf(
             "email" to email,
-            "name" to temp[0]
+            "name" to temp[0],
+            "uid" to uid
         )
         MyApplication.db.collection("user").document(email)
             .set(userData)//user collection에 user 정보 저장
