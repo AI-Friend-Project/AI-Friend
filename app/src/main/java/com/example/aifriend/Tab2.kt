@@ -7,10 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.aifriend.data.favData
+import com.example.aifriend.data.FavData
 import com.example.aifriend.databinding.FragmentTab2Binding
-import com.example.aifriend.recycler.tab2Adapter
-import java.io.LineNumberReader
+import com.example.aifriend.recycler.Tab2Adapter
 
 class Tab2 : Fragment() {
 
@@ -43,14 +42,14 @@ class Tab2 : Fragment() {
             .whereArrayContainsAny("users", listOf(email))
             .get()
             .addOnSuccessListener { result ->
-                val itemList = mutableListOf<favData>()
+                val itemList = mutableListOf<FavData>()
                 for (document in result){
-                    val item = document.toObject(favData::class.java)
+                    val item = document.toObject(FavData::class.java)
                     item.docId = document.id
                     itemList.add(item)
                 }
                 binding.tab2Recyclerview.layoutManager = LinearLayoutManager(activity)
-                binding.tab2Recyclerview.adapter = tab2Adapter(requireContext(), itemList)
+                binding.tab2Recyclerview.adapter = Tab2Adapter(requireContext(), itemList)
             }.addOnFailureListener { exception ->
                 Toast.makeText(activity, "서버로부터 데이터 획득에 실패했습니다.", Toast.LENGTH_SHORT).show()
             }

@@ -22,8 +22,10 @@
         <activity android:name=".LoginActivity"/>
         <activity android:name=".FavdetailActivity"/>
         <activity android:name=".NotificationActivity"/>
-        <activity android:name=".AddBoardActivity"/>
         <activity android:name=".ChatRoomActivity"/>
+        <activity android:name=".BoardViewActivity"/>
+        <activity android:name=".BoardWritingActivity"/>
+        <activity android:name=".FriendViewActivity"/>
     </application>
 
 </manifest>

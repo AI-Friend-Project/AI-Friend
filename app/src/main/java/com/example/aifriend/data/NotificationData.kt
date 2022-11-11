@@ -1,6 +1,6 @@
 package com.example.aifriend.data
 
-class notificationData {
+class NotificationData {
     var docId: String? = null
     var type : String? = null
     var content: String? = null
