@@ -10,12 +10,12 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aifriend.FavdetailActivity
-import com.example.aifriend.data.favData
+import com.example.aifriend.data.FavData
 import com.example.aifriend.databinding.ViewFavdataBinding
 
-class tab2Adapter (val context: Context, val itemList: List<favData>): RecyclerView.Adapter<tab2Adapter.MyViewHolder>(){
+class Tab2Adapter (val context: Context, val itemList: List<FavData>): RecyclerView.Adapter<Tab2Adapter.MyViewHolder>(){
     inner class MyViewHolder(val binding: ViewFavdataBinding) : RecyclerView.ViewHolder(binding.root){
-        fun bind (data: favData){
+        fun bind (data: FavData){
             binding.favNameView.text=data.favName
         }
     }

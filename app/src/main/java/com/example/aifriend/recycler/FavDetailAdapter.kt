@@ -11,25 +11,23 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aifriend.FavdetailActivity
 import com.example.aifriend.MyApplication
-import com.example.aifriend.MyApplication.Companion.email
-import com.example.aifriend.data.userData
+import com.example.aifriend.data.UserData
 import com.example.aifriend.databinding.ViewUserdataBinding
 import com.google.firebase.firestore.FieldValue
-import java.lang.reflect.Member
-import java.text.Collator.getInstance
-import java.text.DateFormat.getInstance
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.Calendar.getInstance
 
 @RequiresApi(Build.VERSION_CODES.O)
-class favDetailAdapter(val context: Context, val usersList: List<userData>): RecyclerView.Adapter<favDetailAdapter.MyViewHolder>(){
+class FavDetailAdapter(val context: Context, val usersList: List<UserData>): RecyclerView.Adapter<FavDetailAdapter.MyViewHolder>(){
 
     inner class MyViewHolder(val binding: ViewUserdataBinding) : RecyclerView.ViewHolder(binding.root){
 
+        //
+        private var favDetailActivity = FavdetailActivity.getInstance()
+
         var name : String? = null
         var email : String? = null
-        fun bind(data: userData){
+        fun bind(data: UserData){
             name = data.name
             email = data.email
             binding.NameView.text = data.name
@@ -38,8 +36,10 @@ class favDetailAdapter(val context: Context, val usersList: List<userData>): Rec
         init {
             binding.requestBtn.setOnClickListener {
                 request(email.toString())
-                //수락하기 버튼 누르면 수락 버튼 사라짐
-                binding.requestBtn.visibility = View.INVISIBLE
+                //수락하기 버튼 누르면 수락 버튼 사라짐->필요없어짐
+                //binding.requestBtn.visibility = View.INVISIBLE
+                //수락하기 누르면 친구 추천 리스트 업데이트
+                favDetailActivity.getFavUsers()
             }
         }
     }

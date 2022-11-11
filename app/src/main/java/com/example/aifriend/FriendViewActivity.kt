@@ -1,6 +1,5 @@
 package com.example.aifriend
 
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -9,65 +8,34 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.aifriend.data.MoreBoardData
 import com.example.aifriend.data.UserData
-import com.example.aifriend.databinding.ActivityFavdetailBinding
+import com.example.aifriend.databinding.ActivityFriendViewBinding
 import com.example.aifriend.recycler.FavDetailAdapter
-import com.example.aifriend.recycler.MoreBoardAdapter
-import kotlin.collections.ArrayList
 
 @RequiresApi(Build.VERSION_CODES.O)
-class FavdetailActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityFavdetailBinding
-    //private var itemList = mutableListOf<userData>()
+class FriendViewActivity:AppCompatActivity() {
+    private lateinit var binding: ActivityFriendViewBinding
     private var itemList : MutableList<UserData> = ArrayList()
     private var userCount : Int = 0
     private var favName : String? = null
 
-    //
-    init{
-        instance = this
-    }
-    companion object{
-        private var instance:FavdetailActivity?=null
-        fun getInstance():FavdetailActivity{
-            return instance!!
-        }
-    }
-
-    override fun onCreate (savedInstanceState: Bundle?){
-        binding = ActivityFavdetailBinding.inflate(layoutInflater)
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        binding = ActivityFriendViewBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        favName = intent.getStringExtra("favName").toString()
+        getFavUsers() //친구 목록 불러오기
 
         //툴바
         val toolbar = binding.mainToolbar as androidx.appcompat.widget.Toolbar
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = intent.getStringExtra("favName").orEmpty()
-
-        favName = intent.getStringExtra("favName")
-        binding.favNameView.text = favName
-
-        //인텐트 전달
-        val intent = Intent(this, BoardViewActivity::class.java)
-        intent.putExtra("favName", favName)
-        val intent2 = Intent(this, FriendViewActivity::class.java)
-        intent2.putExtra("favName", favName)
-
-        getFavUsers()
-        makeMainBoardRecyclerView()
-
-        //더보기 버튼 누르면 화면 전환
-        binding.btnViewMore.setOnClickListener{
-            startActivity(intent)
-        }
-        binding.btnFriendMore.setOnClickListener{
-            startActivity(intent2)
-        }
+        supportActionBar?.title = "친구추천 더보기"
     }
 
-    //필요없을수도
+    //favdetailActivity와 동일
     fun getFavUsers(){
         //itemlist 리셋필요
         itemList = ArrayList()
@@ -158,42 +126,10 @@ class FavdetailActivity : AppCompatActivity() {
         Log.d("tag", "pre item count: ${itemList.count()}, user count: ${userCount}")
         if(itemList.count() == userCount){ //친구추천목록 안뜨면 여기 문제임
             Log.d("tag", "item count: ${itemList.count()}, user count: ${userCount}")
-            if(itemList.count() > 3) {
-                itemList = itemList.subList(0, 3)
-            }
-            //가로스크롤
-            binding.mainUsersRecyclerView.layoutManager = LinearLayoutManager(this)
-                .also { it.orientation = LinearLayoutManager.HORIZONTAL }
-            binding.mainUsersRecyclerView.adapter = FavDetailAdapter(this, itemList)
+            //세로스크롤
+            binding.moreFriendView.layoutManager = LinearLayoutManager(this)
+            binding.moreFriendView.adapter = FavDetailAdapter(this, itemList)
         }
-    }
-
-    //BoardViewActivity 와 동일
-    //보이는 개수 제한
-    private fun makeMainBoardRecyclerView(){
-        MyApplication.db.collection("Board").document(favName.toString())
-            .collection("post")
-            .get()
-            .addOnSuccessListener { result ->
-                val itemList = mutableListOf<MoreBoardData>()
-                for (document in result){
-                    val item = document.toObject(MoreBoardData::class.java)
-                    item.docId = document.id
-                    itemList.add(item)
-                }
-                var itemSort = itemList.sortedByDescending { it.time }
-                itemSort = itemSort.subList(0,3)
-                binding.mainBoardRecyclerView.layoutManager = LinearLayoutManager(this)
-                binding.mainBoardRecyclerView.adapter = MoreBoardAdapter(this, itemSort)
-            }.addOnFailureListener { exception ->
-                Toast.makeText(this, "서버로부터 데이터 획득에 실패했습니다.", Toast.LENGTH_SHORT).show()
-            }
-    }
-
-    //리사이클러뷰 업데이트
-    override fun onResume() {
-        super.onResume()
-        makeMainBoardRecyclerView()
     }
 
     //툴바 뒤로가기
