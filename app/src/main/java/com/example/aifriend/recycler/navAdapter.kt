@@ -55,7 +55,7 @@ class navAdapter(val context: Context, val itemList: List<userData>): RecyclerVi
     private fun createChat() {
         /**
          * 채팅방 중복 생성 되는 오류 해결하기
-         *
+         * 시간 오류
          */
         var myUid = Firebase.auth.currentUser?.uid.toString()     // uid 받아오기
         var myEmail = MyApplication.email
