@@ -39,7 +39,7 @@ class ChatRoomAdapter(collectionPath: String,fieldPath: String): RecyclerView.Ad
         fireStore?.collection(collectionPath)
             ?.document(fieldPath)
             ?.collection("Chats")
-            ?.orderBy("time",Query.Direction.ASCENDING)
+            ?.orderBy("time", Query.Direction.DESCENDING)
             ?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                 // ArrayList 비워줌
                 comments.clear()
@@ -47,9 +47,6 @@ class ChatRoomAdapter(collectionPath: String,fieldPath: String): RecyclerView.Ad
                 for (snapshot in querySnapshot!!.documents) {
                     var item = snapshot.toObject<ChatRoomData>()
                     comments.add(item!!)
-                    Log.d("tag", item.toString())
-                    Log.d("tag", uid.toString())
-
                 }
                 notifyDataSetChanged()
 
@@ -133,9 +130,9 @@ class ChatRoomAdapter(collectionPath: String,fieldPath: String): RecyclerView.Ad
     }
 
 }
-/*
-fun calculateTime(time: Long): String {
-    val dateFormat = SimpleDateFormat("MM/dd. hh:mm")
 
-    return dateFormat.format(Date(time)).toString()
-}*/
+//fun calculateTime(time: Long): String {
+//    val dateFormat = SimpleDateFormat("MM/dd. hh:mm")
+//
+//    return dateFormat.format(Date(time)).toString()
+//}

@@ -14,15 +14,11 @@ import androidx.annotation.RequiresApi
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.aifriend.data.favData
-import com.example.aifriend.data.userData
+import com.example.aifriend.data.UserData
 import com.example.aifriend.databinding.ActivityMainBinding
 import com.example.aifriend.databinding.FragmentTab1Binding
 import com.example.aifriend.databinding.HeaderBinding
-import com.example.aifriend.recycler.favDetailAdapter
-import com.example.aifriend.recycler.navAdapter
-import com.example.aifriend.recycler.notificationAdapter
-import com.example.aifriend.recycler.tab2Adapter
+import com.example.aifriend.recycler.NavAdapter
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 
@@ -44,7 +40,7 @@ class MainActivity : AppCompatActivity() {
     //뒤로가기 종료
     var mBackWait:Long = 0
 
-    private var itemList : MutableList<userData> = ArrayList()
+    private var itemList : MutableList<UserData> = ArrayList()
     private var friendsCount : Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -161,8 +157,8 @@ class MainActivity : AppCompatActivity() {
                 .get()
                 .addOnSuccessListener { result ->
                     for (document in result) {
-                        var newList = mutableListOf<userData>()
-                        val item = document.toObject(userData::class.java)
+                        var newList = mutableListOf<UserData>()
+                        val item = document.toObject(UserData::class.java)
                         item.docId = document.id
                         newList.add(item)
                         saveItemList(newList)
@@ -173,13 +169,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveItemList(newList : List<userData>){
+    private fun saveItemList(newList : List<UserData>){
         itemList.addAll(newList)
         Log.d("tag", "saveitem: ${itemList}")
         if(itemList.count() == friendsCount){
             Log.d("tag", "item count: ${itemList.count()}, user count: ${friendsCount}")
             binding.navRecyclerView.layoutManager = LinearLayoutManager(this)
-            binding.navRecyclerView.adapter = navAdapter(this, itemList)
+            binding.navRecyclerView.adapter = NavAdapter(this, itemList)
             //itemList.clear()
         }
     }

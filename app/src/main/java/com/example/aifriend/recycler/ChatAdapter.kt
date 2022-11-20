@@ -14,6 +14,7 @@ import com.example.aifriend.R
 import com.example.aifriend.data.ChatData
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import androidx.recyclerview.widget.DiffUtil as Diff
@@ -38,7 +39,6 @@ class ChatAdapter: RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
             ?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                 // ArrayList 비워줌
                 chatList.clear()
-
                 for (snapshot in querySnapshot!!.documents) {
                     var item = snapshot.toObject<ChatData>()
                     item?.key = "ChatRoomList/" + snapshot.id
@@ -47,7 +47,6 @@ class ChatAdapter: RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
                 notifyDataSetChanged()
 
             }
-
 
         // DiffUtil 로 갱신 해보기
 
