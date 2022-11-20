@@ -1,6 +1,7 @@
 package com.example.aifriend.recycler
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
@@ -38,7 +39,7 @@ class ChatRoomAdapter(collectionPath: String,fieldPath: String): RecyclerView.Ad
         fireStore?.collection(collectionPath)
             ?.document(fieldPath)
             ?.collection("Chats")
-            ?.orderBy("time",Query.Direction.ASCENDING)
+            ?.orderBy("time", Query.Direction.DESCENDING)
             ?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
                 // ArrayList 비워줌
                 comments.clear()
@@ -71,7 +72,7 @@ class ChatRoomAdapter(collectionPath: String,fieldPath: String): RecyclerView.Ad
 
     //뷰 홀더 설정
     class SenderViewHolder(binding: SenderMsgboxBinding) : RecyclerView.ViewHolder(binding.root) {
-        var msgTextView = binding.msgTextView
+        private var msgTextView = binding.msgTextView
         var timeTextView = binding.timeTextView
 
         fun bind(item: ChatRoomData) {
@@ -89,6 +90,7 @@ class ChatRoomAdapter(collectionPath: String,fieldPath: String): RecyclerView.Ad
             msgTextView.text = item.message
             timeTextView.text = item.time
             nameTextView.text = item.name
+            item.name?.let { Log.d("tag", it) }
         }
 
 
@@ -112,6 +114,7 @@ class ChatRoomAdapter(collectionPath: String,fieldPath: String): RecyclerView.Ad
 
         }
 
+
     }
 
     override fun getItemCount(): Int {
@@ -127,9 +130,9 @@ class ChatRoomAdapter(collectionPath: String,fieldPath: String): RecyclerView.Ad
     }
 
 }
-/*
-fun calculateTime(time: Long): String {
-    val dateFormat = SimpleDateFormat("MM/dd. hh:mm")
 
-    return dateFormat.format(Date(time)).toString()
-}*/
+//fun calculateTime(time: Long): String {
+//    val dateFormat = SimpleDateFormat("MM/dd. hh:mm")
+//
+//    return dateFormat.format(Date(time)).toString()
+//}
