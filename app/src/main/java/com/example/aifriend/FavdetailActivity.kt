@@ -194,6 +194,7 @@ class FavdetailActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         makeMainBoardRecyclerView()
+        getFavUsers()
     }
 
     //툴바 뒤로가기
