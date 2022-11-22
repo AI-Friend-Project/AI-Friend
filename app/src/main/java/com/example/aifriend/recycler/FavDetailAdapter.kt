@@ -1,6 +1,7 @@
 package com.example.aifriend.recycler
 
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aifriend.FavdetailActivity
 import com.example.aifriend.MyApplication
+import com.example.aifriend.ViewDetailActivity
 import com.example.aifriend.data.UserData
 import com.example.aifriend.databinding.ViewUserdataBinding
 import com.google.firebase.firestore.FieldValue
@@ -54,7 +56,8 @@ class FavDetailAdapter(val context: Context, val usersList: List<UserData>): Rec
         holder.bind(usersList[position])
 
         //아이템클릭
-        holder.itemView.setOnClickListener{}
+        holder.itemView.setOnClickListener{
+        }
     }
 
     override fun getItemCount(): Int {

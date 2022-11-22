@@ -1,9 +1,12 @@
 package com.example.aifriend.recycler
 
 import android.content.Context
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.example.aifriend.ViewDetailActivity
 import com.example.aifriend.data.MoreBoardData
 import com.example.aifriend.databinding.ViewMoreboarddataBinding
 
@@ -29,7 +32,14 @@ class MoreBoardAdapter (val context: Context, val itemList: List<MoreBoardData>)
         holder.bind(itemList[position])
 
         //아이템클릭
-        holder.itemView.setOnClickListener{}
+        holder.itemView.setOnClickListener{
+            val intent = Intent(holder.itemView?.context, ViewDetailActivity::class.java)
+            intent.putExtra("title", itemList[position].title)
+            intent.putExtra("user", itemList[position].email)
+            intent.putExtra("date", itemList[position].time)
+            intent.putExtra("content", itemList[position].content)
+            ContextCompat.startActivity(holder.itemView.context, intent, null)
+        }
     }
 
     override fun getItemCount(): Int {
