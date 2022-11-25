@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.example.aifriend.data.ChatData
+import com.example.aifriend.data.UserData
 import com.example.aifriend.databinding.ActivityJoinBinding
 import com.example.aifriend.databinding.ActivityLoginBinding
 import com.google.firebase.auth.ktx.auth
@@ -14,6 +15,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -82,6 +84,7 @@ class LoginActivity : AppCompatActivity(){
                     binding.pwEditView.text.clear()
                     if (task.isSuccessful) {
                         if(MyApplication.checkAuth()){ //로그인 성공
+                            checkToken(email)
                             MyApplication.email=email
                             finish()
                         }else {
@@ -182,6 +185,43 @@ class LoginActivity : AppCompatActivity(){
         // 데이터 추가
         newChat?.set(data)
 
+    }
+    /**
+     *  회원가입시 토큰 저장 ( 알림 기능 구현 시 필요 )
+     */
+    private fun getNewToken(myUserEmail:String) {
+        FirebaseMessaging.getInstance().token.addOnSuccessListener { task ->
+            if(task.isNotEmpty()) {
+                MyApplication.db.collection("user").document(myUserEmail)
+                    .update("token", task)
+            }
+        }
+    }
+
+    private fun checkToken(myUserEmail: String) {
+        FirebaseMessaging.getInstance().token.addOnSuccessListener { task ->
+            if(task.isNotEmpty()) {
+                MyApplication.db.collection("user")?.document(myUserEmail)
+                    ?.addSnapshotListener { documentSnapshot, _ ->
+                        if (documentSnapshot == null) return@addSnapshotListener
+
+                        val users = documentSnapshot.toObject<UserData>()
+
+                        if (users?.uid != null) {
+                            // 토큰이 변경되었을 경우 갱신
+                            if (users.token != task) {
+                                Log.d("tag", "profileLoad: 토큰 변경되었음.")
+                                getNewToken(myUserEmail)
+                            } else {
+                                Log.d("tag", "profileLoad: 이미 동일한 토큰이 존재함.")
+                            }
+                            Log.d("tag", "uid != null")
+                        } else {
+                            Log.d("tag", "uid == null")
+                        }
+                    }
+            }
+        }
     }
 
 }
