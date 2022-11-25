@@ -1,9 +1,21 @@
 package com.example.aifriend
 
-import androidx.appcompat.app.AppCompatActivity
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.aifriend.Utils.Constants
+import com.example.aifriend.Utils.Constants.CHANNEL_ID
+import com.example.aifriend.Utils.Constants.CHANNEL_NAME
 import com.example.aifriend.data.ChatRoomData
 import com.example.aifriend.data.UserData
 import com.example.aifriend.databinding.ActivityChatRoomBinding
@@ -14,7 +26,6 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 /**
  * 채팅 화면 프래그먼트
@@ -68,7 +79,7 @@ class ChatRoomActivity : AppCompatActivity() {
             chatDataMap["key"] = destinationUid.toString()
             chatDataMap["lastChat"] = chatEditText.text.toString()
             chatDataMap["time"] = curTime
-
+            name?.let { it1 -> sendNotification(it1, chatEditText.text.toString()) }
             //저장
             if(chatRoomUid == null) {
                 fireStore.collection(collectionPath)
@@ -123,6 +134,42 @@ class ChatRoomActivity : AppCompatActivity() {
                 }
                 name = userList[0].name
             }
+    }
+
+    private fun sendNotification(title: String, message: String) {
+
+
+        val intent = Intent(this, MainActivity::class.java)
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE)
+                as NotificationManager
+        val notificationID = Random()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createNotificationChannel(notificationManager)
+        }
+
+        val pendingIntent = PendingIntent.getActivity(this, 0, intent,  PendingIntent.FLAG_IMMUTABLE)
+
+        val notification = NotificationCompat.Builder(this, Constants.CHANNEL_ID)
+            .setContentTitle(title)
+            .setContentText(message)
+            .setSmallIcon(R.drawable.ic_baseline_notifications_active_24)
+            .setAutoCancel(true)
+            .setContentIntent(pendingIntent)
+            .build()
+
+        notificationManager.notify(notificationID.nextInt(), notification)
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun createNotificationChannel(notificationManager: NotificationManager) {
+        val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH).apply {
+            description = "Channel Description"
+            enableLights(true)
+            lightColor = Color.GREEN
+        }
+        notificationManager.createNotificationChannel(channel)
     }
 
 
