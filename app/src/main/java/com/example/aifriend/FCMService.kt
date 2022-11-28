@@ -14,7 +14,11 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.example.aifriend.Utils.Constants
+import com.example.aifriend.Utils.MyWorker
+import com.example.aifriend.data.ChatNotificationData
+import com.example.aifriend.data.UserData
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.firebase.messaging.ktx.remoteMessage
@@ -22,13 +26,22 @@ import java.util.*
 
 class FCMService : FirebaseMessagingService() {
 
-    override fun onMessageReceived(message: RemoteMessage) {
-        super.onMessageReceived(message)
+    override fun onMessageReceived(remoteMessage: RemoteMessage) {
+        super.onMessageReceived(remoteMessage)
 
-        Log.d("tag", "From: ${message.from}")
+        Log.d("tag", "From: ${remoteMessage.from}")
 
-        if(message.data.isNotEmpty()) {
-            Log.d("tag", "Message: ${message.data}")
+        if(remoteMessage.notification != null){
+            remoteMessage.notification?.title?.let { sendNotification(it, remoteMessage.notification?.body!!) }
+            if (true) {
+                scheduleJob();
+            } else {
+                handleNow();
+            }
+        } else if(remoteMessage.data.isNotEmpty()) {
+            Log.d("tag", "Message: ${remoteMessage.data}")
+            var mData = remoteMessage.data
+            mData["title"]?.let { mData["body"]?.let { it1 -> sendNotification(it, it1) } }
             if(true) {
                 scheduleJob()
             } else {
@@ -36,7 +49,7 @@ class FCMService : FirebaseMessagingService() {
             }
         }
 
-        message.notification?.let {
+        remoteMessage.notification?.let {
             it.title?.let { it1 -> it.body?.let { it2 -> sendNotification(it1, it2) } }
             Log.d("tag", "Message Body: ${it.body}")
         }
@@ -53,6 +66,9 @@ class FCMService : FirebaseMessagingService() {
     // 메세지 페이로드가 있을때 실행됨
     private fun scheduleJob() {
         Log.d("tag", "schedule Job")
+        val work = OneTimeWorkRequest.Builder(MyWorker::class.java).build()
+
+        WorkManager.getInstance(this).beginWith(work).enqueue()
     }
 
     // 10초 이내..
@@ -101,4 +117,6 @@ class FCMService : FirebaseMessagingService() {
         }
         notificationManager.createNotificationChannel(channel)
     }
+
+
 }

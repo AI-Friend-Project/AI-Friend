@@ -22,6 +22,7 @@
         <entry key="app/src/main/res/layout/view_navdata.xml" value="0.17395833333333333" />
         <entry key="app/src/main/res/layout/view_notidata.xml" value="0.17395833333333333" />
         <entry key="app/src/main/res/menu/menu_main.xml" value="0.18385416666666668" />
+        <entry key="app/src/main/res/xml/network_security_config.xml" value="0.1" />
       </map>
     </option>
   </component>

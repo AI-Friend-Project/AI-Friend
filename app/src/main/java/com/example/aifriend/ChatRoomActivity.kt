@@ -6,8 +6,11 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.net.Network
 import android.os.Build
 import android.os.Bundle
+import android.os.Message
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
@@ -16,6 +19,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.aifriend.Utils.Constants
 import com.example.aifriend.Utils.Constants.CHANNEL_ID
 import com.example.aifriend.Utils.Constants.CHANNEL_NAME
+import com.example.aifriend.Utils.Constants.FCM_MESSAGE_URL
+import com.example.aifriend.Utils.Constants.SERVER_KEY
+import com.example.aifriend.data.ChatData
 import com.example.aifriend.data.ChatRoomData
 import com.example.aifriend.data.UserData
 import com.example.aifriend.databinding.ActivityChatRoomBinding
@@ -24,8 +30,12 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import org.json.JSONObject
+import java.net.HttpURLConnection
+import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * 채팅 화면 프래그먼트
@@ -79,7 +89,7 @@ class ChatRoomActivity : AppCompatActivity() {
             chatDataMap["key"] = destinationUid.toString()
             chatDataMap["lastChat"] = chatEditText.text.toString()
             chatDataMap["time"] = curTime
-            name?.let { it1 -> sendNotification(it1, chatEditText.text.toString()) }
+            sendPostToFCM(destinationUid!!, uid!!, name, chatEditText.text.toString())
             //저장
             if(chatRoomUid == null) {
                 fireStore.collection(collectionPath)
@@ -106,6 +116,7 @@ class ChatRoomActivity : AppCompatActivity() {
                 }
                 chatEditText.text = null
             }
+
         }
         chatRoom()
 
@@ -136,41 +147,72 @@ class ChatRoomActivity : AppCompatActivity() {
             }
     }
 
-    private fun sendNotification(title: String, message: String) {
+    private fun sendPostToFCM(destinationUid: String, myUid: String, pTitle: String?, pMessage: String?) {
+        val collectionPath : String = destinationUid!!.split("/")?.get(0)
+        val fieldPathUid: String = destinationUid!!.split("/")?.get(1)
+        val docRef = fireStore.collection(collectionPath).document(fieldPathUid)
+        var userUid : String = ""
+        docRef.get().addOnSuccessListener {
+            Log.d("tag", it.data.toString())
+            var item = it.toObject<ChatData>()
+            if (item != null) {
+                userUid = if(item.uid?.get(0)?.equals(myUid) == true) {
+                    item.uid?.get(1).toString()
+                } else {
+                    item.uid?.get(0).toString()
+                }
+            }
+            if (userUid != null) {
+                var token : String = ""
+                fireStore.collection("user").whereEqualTo("uid", userUid).addSnapshotListener { value, error ->
+                    for (snapshot in value!!.documents) {
+                        var item = snapshot.toObject<UserData>()
+                        token = item?.token.toString()
+                    }
+
+                    Thread(
+                        Runnable {
+                            kotlin.run {
+                                try {
+                                    val root = JSONObject()
+                                    val notification = JSONObject()
+
+                                    notification.put("title", pTitle)
+                                    notification.put("body", pMessage)
 
 
-        val intent = Intent(this, MainActivity::class.java)
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE)
-                as NotificationManager
-        val notificationID = Random()
+                                    root.put("data", notification) // 여기서 data와 notification 두가지 중 설정하면 된다.
+                                    root.put("to", token)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createNotificationChannel(notificationManager)
+                                    val url = URL(FCM_MESSAGE_URL)!!
+                                    val conn = url.openConnection() as HttpURLConnection
+                                    conn.requestMethod = "POST"
+                                    conn.doOutput = true
+                                    conn.doInput = true
+                                    conn.addRequestProperty("Authorization", "key=$SERVER_KEY") //받아 온 서버키를 넣어주세요
+                                    conn.setRequestProperty("Accept", "application/json")
+                                    conn.setRequestProperty("Content-type", "application/json")
+
+                                    val os = conn.outputStream
+                                    os.write(root.toString().toByteArray(Charsets.UTF_8));
+
+                                    os.flush();
+                                    conn.responseCode
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                            }
+
+                        }
+                    ).start()
+
+                }
+            }
+
         }
-
-        val pendingIntent = PendingIntent.getActivity(this, 0, intent,  PendingIntent.FLAG_IMMUTABLE)
-
-        val notification = NotificationCompat.Builder(this, Constants.CHANNEL_ID)
-            .setContentTitle(title)
-            .setContentText(message)
-            .setSmallIcon(R.drawable.ic_baseline_notifications_active_24)
-            .setAutoCancel(true)
-            .setContentIntent(pendingIntent)
-            .build()
-
-        notificationManager.notify(notificationID.nextInt(), notification)
-
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun createNotificationChannel(notificationManager: NotificationManager) {
-        val channel = NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH).apply {
-            description = "Channel Description"
-            enableLights(true)
-            lightColor = Color.GREEN
-        }
-        notificationManager.createNotificationChannel(channel)
-    }
+
 
 
 
