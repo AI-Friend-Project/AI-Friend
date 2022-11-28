@@ -20,7 +20,6 @@ import com.example.aifriend.Utils.Constants
 import com.example.aifriend.Utils.Constants.CHANNEL_ID
 import com.example.aifriend.Utils.Constants.CHANNEL_NAME
 import com.example.aifriend.Utils.Constants.FCM_MESSAGE_URL
-import com.example.aifriend.Utils.Constants.SERVER_KEY
 import com.example.aifriend.data.ChatData
 import com.example.aifriend.data.ChatRoomData
 import com.example.aifriend.data.UserData
@@ -189,7 +188,7 @@ class ChatRoomActivity : AppCompatActivity() {
                                     conn.requestMethod = "POST"
                                     conn.doOutput = true
                                     conn.doInput = true
-                                    conn.addRequestProperty("Authorization", "key=$SERVER_KEY") //받아 온 서버키를 넣어주세요
+                                    conn.addRequestProperty("Authorization", "key=${BuildConfig.FCM_SERVER_KEY}") //받아 온 서버키를 넣어주세요
                                     conn.setRequestProperty("Accept", "application/json")
                                     conn.setRequestProperty("Content-type", "application/json")
 
