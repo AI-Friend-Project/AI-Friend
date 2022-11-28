@@ -1,9 +1,26 @@
 package com.example.aifriend
 
-import androidx.appcompat.app.AppCompatActivity
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.graphics.Color
+import android.net.Network
+import android.os.Build
 import android.os.Bundle
+import android.os.Message
+import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.aifriend.Utils.Constants
+import com.example.aifriend.Utils.Constants.CHANNEL_ID
+import com.example.aifriend.Utils.Constants.CHANNEL_NAME
+import com.example.aifriend.Utils.Constants.FCM_MESSAGE_URL
+import com.example.aifriend.data.ChatData
 import com.example.aifriend.data.ChatRoomData
 import com.example.aifriend.data.UserData
 import com.example.aifriend.databinding.ActivityChatRoomBinding
@@ -12,6 +29,9 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import org.json.JSONObject
+import java.net.HttpURLConnection
+import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -68,7 +88,7 @@ class ChatRoomActivity : AppCompatActivity() {
             chatDataMap["key"] = destinationUid.toString()
             chatDataMap["lastChat"] = chatEditText.text.toString()
             chatDataMap["time"] = curTime
-
+            sendPostToFCM(destinationUid!!, uid!!, name, chatEditText.text.toString())
             //저장
             if(chatRoomUid == null) {
                 fireStore.collection(collectionPath)
@@ -95,6 +115,7 @@ class ChatRoomActivity : AppCompatActivity() {
                 }
                 chatEditText.text = null
             }
+
         }
         chatRoom()
 
@@ -124,6 +145,73 @@ class ChatRoomActivity : AppCompatActivity() {
                 name = userList[0].name
             }
     }
+
+    private fun sendPostToFCM(destinationUid: String, myUid: String, pTitle: String?, pMessage: String?) {
+        val collectionPath : String = destinationUid!!.split("/")?.get(0)
+        val fieldPathUid: String = destinationUid!!.split("/")?.get(1)
+        val docRef = fireStore.collection(collectionPath).document(fieldPathUid)
+        var userUid : String = ""
+        docRef.get().addOnSuccessListener {
+            Log.d("tag", it.data.toString())
+            var item = it.toObject<ChatData>()
+            if (item != null) {
+                userUid = if(item.uid?.get(0)?.equals(myUid) == true) {
+                    item.uid?.get(1).toString()
+                } else {
+                    item.uid?.get(0).toString()
+                }
+            }
+            if (userUid != null) {
+                var token : String = ""
+                fireStore.collection("user").whereEqualTo("uid", userUid).addSnapshotListener { value, error ->
+                    for (snapshot in value!!.documents) {
+                        var item = snapshot.toObject<UserData>()
+                        token = item?.token.toString()
+                    }
+
+                    Thread(
+                        Runnable {
+                            kotlin.run {
+                                try {
+                                    val root = JSONObject()
+                                    val notification = JSONObject()
+
+                                    notification.put("title", pTitle)
+                                    notification.put("body", pMessage)
+
+
+                                    root.put("data", notification) // 여기서 data와 notification 두가지 중 설정하면 된다.
+                                    root.put("to", token)
+
+                                    val url = URL(FCM_MESSAGE_URL)!!
+                                    val conn = url.openConnection() as HttpURLConnection
+                                    conn.requestMethod = "POST"
+                                    conn.doOutput = true
+                                    conn.doInput = true
+                                    conn.addRequestProperty("Authorization", "key=${BuildConfig.FCM_SERVER_KEY}") //받아 온 서버키를 넣어주세요
+                                    conn.setRequestProperty("Accept", "application/json")
+                                    conn.setRequestProperty("Content-type", "application/json")
+
+                                    val os = conn.outputStream
+                                    os.write(root.toString().toByteArray(Charsets.UTF_8));
+
+                                    os.flush();
+                                    conn.responseCode
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                }
+                            }
+
+                        }
+                    ).start()
+
+                }
+            }
+
+        }
+    }
+
+
 
 
 

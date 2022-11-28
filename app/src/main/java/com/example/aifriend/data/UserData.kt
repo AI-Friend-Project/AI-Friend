@@ -5,4 +5,5 @@ class UserData {
     var email: String? = null
     var name: String? = null
     var uid: String? = null
+    var token: String? = null
 }
