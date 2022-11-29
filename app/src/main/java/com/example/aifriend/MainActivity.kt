@@ -128,10 +128,15 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun getInformation(){ //헤더에 내 정보 띄우기, binding 이용 방법 모르겠음
+    private fun getInformation(){ //헤더에 내 정보 띄우기
         val header: View = navigationView.getHeaderView(0)
-        val userName: TextView = header.findViewById(R.id.headerView)
-        userName.text = MyApplication.email //파이어스토어에서 user 정보 (닉네임) 가져오가
+        val userEmail: TextView = header.findViewById(R.id.headerEmailView)
+        val userName: TextView = header.findViewById(R.id.headerNameView)
+        userEmail.text = MyApplication.email
+        val e = MyApplication.email.toString()
+        val temp = e.split("@")
+        var name = temp[0]
+        userName.text = name
     }
 
     private fun getFriendsList(){

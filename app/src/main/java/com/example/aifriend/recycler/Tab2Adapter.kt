@@ -33,7 +33,6 @@ class Tab2Adapter (val context: Context, val itemList: List<FavData>): RecyclerV
             var intent = Intent(holder.itemView?.context, FavdetailActivity::class.java)
             intent.putExtra("favName", itemList[position].favName)
             ContextCompat.startActivity(holder.itemView.context,intent,null)
-            Toast.makeText(context, "click", Toast.LENGTH_SHORT).show()
         }
     }
 

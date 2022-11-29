@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.aifriend.data.MoreBoardData
 import com.example.aifriend.data.UserData
 import com.example.aifriend.databinding.ActivityFavdetailBinding
-import com.example.aifriend.recycler.FavDetailAdapter
-import com.example.aifriend.recycler.MoreBoardAdapter
+import com.example.aifriend.recycler.UserAdapter
+import com.example.aifriend.recycler.BoardAdapter
 import kotlin.collections.ArrayList
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -47,7 +47,6 @@ class FavdetailActivity : AppCompatActivity() {
         supportActionBar?.title = intent.getStringExtra("favName").orEmpty()
 
         favName = intent.getStringExtra("favName")
-        binding.favNameView.text = favName
 
         //인텐트 전달
         val intent = Intent(this, BoardViewActivity::class.java)
@@ -55,8 +54,9 @@ class FavdetailActivity : AppCompatActivity() {
         val intent2 = Intent(this, FriendViewActivity::class.java)
         intent2.putExtra("favName", favName)
 
-        getFavUsers()
-        makeMainBoardRecyclerView()
+        //onResume 에서 작동함
+        //getFavUsers()
+        //makeMainBoardRecyclerView()
 
         //더보기 버튼 누르면 화면 전환
         binding.btnViewMore.setOnClickListener{
@@ -130,7 +130,7 @@ class FavdetailActivity : AppCompatActivity() {
 
     private fun makeUsersRecyclerView(usersList: List<String>){
         Log.d("tag", "usersList: ${usersList}")
-        userCount = usersList.count()
+        userCount = usersList.size
         for (user in usersList) {
             MyApplication.db.collection("user")
                 .whereEqualTo("email", user)
@@ -155,16 +155,16 @@ class FavdetailActivity : AppCompatActivity() {
     private fun saveItemList(newList : List<UserData>){
         itemList.addAll(newList)
         Log.d("tag", "saveitem: ${itemList}")
-        Log.d("tag", "pre item count: ${itemList.count()}, user count: ${userCount}")
-        if(itemList.count() == userCount){ //친구추천목록 안뜨면 여기 문제임
-            Log.d("tag", "item count: ${itemList.count()}, user count: ${userCount}")
-            if(itemList.count() > 3) {
+        Log.d("tag", "pre item count: ${itemList.size}, user count: ${userCount}")
+        if(itemList.size == userCount){ //친구추천목록 안뜨면 여기 문제임
+            Log.d("tag", "item count: ${itemList.size}, user count: ${userCount}")
+            if(itemList.size > 3) {
                 itemList = itemList.subList(0, 3)
             }
             //가로스크롤
             binding.mainUsersRecyclerView.layoutManager = LinearLayoutManager(this)
                 .also { it.orientation = LinearLayoutManager.HORIZONTAL }
-            binding.mainUsersRecyclerView.adapter = FavDetailAdapter(this, itemList)
+            binding.mainUsersRecyclerView.adapter = UserAdapter(this, itemList)
         }
     }
 
@@ -182,9 +182,11 @@ class FavdetailActivity : AppCompatActivity() {
                     itemList.add(item)
                 }
                 var itemSort = itemList.sortedByDescending { it.time }
-                itemSort = itemSort.subList(0,3)
+                if (itemSort.size >4){
+                    itemSort = itemSort.subList(0,4)
+                }
                 binding.mainBoardRecyclerView.layoutManager = LinearLayoutManager(this)
-                binding.mainBoardRecyclerView.adapter = MoreBoardAdapter(this, itemSort)
+                binding.mainBoardRecyclerView.adapter = BoardAdapter(this, itemSort)
             }.addOnFailureListener { exception ->
                 Toast.makeText(this, "서버로부터 데이터 획득에 실패했습니다.", Toast.LENGTH_SHORT).show()
             }

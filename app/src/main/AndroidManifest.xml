@@ -3,6 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.aifriend">
 
+    <uses-permission android:name="andoird.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
+
     <application
         android:name=".MyApplication"
         android:allowBackup="true"
@@ -26,9 +32,11 @@
         <activity android:name=".NotificationActivity" />
         <activity android:name=".ChatRoomActivity" />
         <activity android:name=".BoardViewActivity" />
-        <activity android:name=".BoardWritingActivity" />
+        <activity android:name=".BoardWritingActivity"
+            android:windowSoftInputMode="adjustPan"/>/>
         <activity android:name=".FriendViewActivity" />
         <activity android:name=".ViewDetailActivity" />
+        <activity android:name=".JoinActivity"/>
 
        <service android:name=".FCMService"
            android:exported="false">

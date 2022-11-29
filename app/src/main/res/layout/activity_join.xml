@@ -6,30 +6,54 @@
     tools:context=".MainActivity"
     android:orientation="vertical">
 
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:id="@+id/join_toolbar"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="회원가입할 이메일 주소와 비밀번호를 입력하세요"/>
+        android:text="이메일 주소"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="17dp"
+        android:layout_marginRight="15dp"
+        android:textSize="15dp"/>
     <EditText
         android:id="@+id/idEditView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="이메일 주소"/>
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="비밀번호"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="17dp"
+        android:layout_marginRight="15dp"
+        android:textSize="15dp"/>
     <EditText
         android:id="@+id/pwEditView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="비밀번호"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
         android:inputType="textPassword"/>
     <Button
         android:id="@+id/joinBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="회원가입 하기"/>
+        android:text="회원가입 하기"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="100dp"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="메일이 확인 되지 않는 경우 스팸메일함을 확인해주세요"/>
+        android:text="메일이 확인 되지 않는 경우 스팸메일함을 확인해주세요"
+        android:gravity="center"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"/>
 
 </LinearLayout>
