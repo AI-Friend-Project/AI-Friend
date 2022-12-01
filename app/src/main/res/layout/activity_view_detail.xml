@@ -1,32 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentTop="true"
         android:id="@+id/main_toolbar"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/view_detail_title"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/view_detail_user"/>
-    <Button
+    <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/main_toolbar"
+        android:layout_marginLeft="10dp"
         android:id="@+id/add_friend_btn"
-        android:text="친구 추가하기"
+        android:src="@drawable/ic_baseline_account_circle_24"
+        android:background="@android:color/transparent"
         android:visibility="visible"/>
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/main_toolbar"
+        android:layout_toRightOf="@+id/add_friend_btn"
+        android:paddingTop="2dp"
+        android:textSize="20dp"
+        android:textColor="@color/black"
+        android:id="@+id/view_detail_name"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/main_toolbar"
+        android:layout_marginTop="18dp"
+        android:layout_marginRight="10dp"
+        android:paddingTop="5dp"
+        android:layout_alignParentRight="true"
+        android:textSize="15dp"
         android:id="@+id/view_detail_date"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@+id/view_detail_name"
+        android:layout_marginTop="14dp"
+        android:background="#F5F5F5"/>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/view_detail_name"
+        android:layout_marginLeft="15dp"
+        android:layout_marginTop="23dp"
+        android:layout_marginBottom="5dp"
+        android:textSize="25dp"
+        android:textColor="@color/black"
+        android:id="@+id/view_detail_title"/>
+    <ImageView
+        android:layout_width="400dp"
+        android:layout_height="400dp"
+        android:layout_below="@id/view_detail_title"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="6dp"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:id="@+id/view_detail_image"
+        android:visibility="gone"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_below="@id/view_detail_image"
+        android:textSize="20dp"
         android:id="@+id/view_detail_content"/>
-</LinearLayout>
+</RelativeLayout>

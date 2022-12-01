@@ -61,9 +61,11 @@ class NotificationActivity: AppCompatActivity() {
                     item.docId = document.id
                     itemList.add(item)
                 }
-                //var itemSort = itemList.sortByDescending { it.time}  as List<notificationData>
+                var itemSort = itemList.sortedByDescending {it.time}
                 binding.notiRecyclerView.layoutManager = LinearLayoutManager(this)
-                binding.notiRecyclerView.adapter = NotificationAdapter(this, itemList)
+                binding.notiRecyclerView.adapter = NotificationAdapter(this,
+                    itemSort as MutableList<NotificationData>
+                )
             }.addOnFailureListener { exception ->
                 Toast.makeText(this, "서버로부터 데이터 획득에 실패했습니다.", Toast.LENGTH_SHORT).show()
             }

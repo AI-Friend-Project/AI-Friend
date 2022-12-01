@@ -77,15 +77,24 @@ class ChatAdapter: RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
         // 계정에 따라 상대방 이름 다르게 보이기
         if(chatList[position].uid?.get(0) == uid) {
             holder.chatTitleTextView.text = chatList[position].name?.get(1)
+            if(chatList[position].check?.get(0) == 0) {
+                holder.receivedChatNotificationIcon.visibility = VISIBLE
+            } else {
+                holder.receivedChatNotificationIcon.visibility = INVISIBLE
+            }
         }
         else {
             holder.chatTitleTextView.text = chatList[position].name?.get(0)
+            if(chatList[position].check?.get(1) == 0) {
+                holder.receivedChatNotificationIcon.visibility = VISIBLE
+            } else {
+                holder.receivedChatNotificationIcon.visibility = INVISIBLE
+            }
         }
         holder.chatMessageTextView.text = chatList[position].lastChat
        
         //채팅창 선책 시 이동
         holder.itemView.setOnClickListener {
-            holder.receivedChatNotificationIcon.visibility = INVISIBLE
             val intent = Intent(holder.itemView.context, ChatRoomActivity::class.java)
             intent.putExtra("destinationUid", chatList[position].key)
             holder.itemView.context?.startActivity(intent)
@@ -104,5 +113,6 @@ class ChatAdapter: RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
             0
         }
     }
+
 
 }

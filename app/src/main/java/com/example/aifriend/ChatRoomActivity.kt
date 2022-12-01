@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Message
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
@@ -67,18 +68,57 @@ class ChatRoomActivity : AppCompatActivity() {
         val dateFormat = SimpleDateFormat("yyyy.MM.dd HH:mm:ss",Locale.KOREA)
         val curTime = dateFormat.format(Date(time)).toString()
         destinationUid = intent.getStringExtra("destinationUid")
+        val collectionPath : String = destinationUid!!.split("/")?.get(0)
+        val fieldPathUid: String = destinationUid!!.split("/")?.get(1)
         uid = Firebase.auth.currentUser?.uid.toString()
         recyclerView = binding.chatRoomActivityRecyclerView
         getName()
 
-        val collectionPath : String = destinationUid!!.split("/")?.get(0)
-        val fieldPathUid: String = destinationUid!!.split("/")?.get(1)
 
         /**
          * 채팅 띄우기
          **/
         chatAdapter = ChatRoomAdapter(collectionPath,fieldPathUid)
         chatRoom()
+
+        var docRef = MyApplication.db.collection(collectionPath).document(fieldPathUid)
+
+        var checkList = arrayListOf<Int>()
+        checkList.add(1)
+        checkList.add(1)
+
+        docRef.get().addOnSuccessListener {
+            var item = it.toObject<ChatData>()
+            if(item?.uid?.get(0) == uid) {
+                checkList[0] = 1
+                checkList[1] = item?.check?.get(1)!!
+            } else {
+                // uid[1] == 내 uid
+                checkList[0] = item?.check?.get(0)!!
+                checkList[1] = 1
+            }
+            var checks = hashMapOf(
+                "check" to checkList
+            )
+            docRef.update(checks as Map<String, Any>).addOnSuccessListener {
+                Log.d("tag", "채팅 확인")
+            }.addOnFailureListener{
+                Log.d("tag", "채팅 확인 실패")
+            }
+        }
+
+
+//        var map_0 = mutableMapOf<String, Any>()
+//        map_0["check_0"] = 0
+//        var map_1 = mutableMapOf<String, Any>()
+//        map_0["check_1"] = 0
+//
+//        MyApplication.db.collection("ChatRoomList").document(fieldPathUid)
+//            .update(map_0).addOnSuccessListener {
+//                Toast.makeText(this, "채팅 확인", Toast.LENGTH_SHORT).show()
+//            }.addOnFailureListener{
+//                Toast.makeText(this, "실패", Toast.LENGTH_SHORT).show()
+//            }
 
 
         /**
@@ -119,6 +159,37 @@ class ChatRoomActivity : AppCompatActivity() {
                 }
                 chatEditText.text = null
             }
+            // 채팅 보내면 상대에 1로 변경
+            docRef.get().addOnSuccessListener {
+                var item = it.toObject<ChatData>()
+                if (item?.uid?.get(0) == uid) {
+                    checkList[0] = item?.check?.get(0)!!    // 나
+                    checkList[1] = 0   // 상대방
+                } else {
+                    // uid[1] == 내 uid
+                    checkList[0] = 0   // 상대방
+                    checkList[1] = item?.check?.get(1)!!    // 나
+                }
+                var checks = hashMapOf(
+                    "check" to checkList
+                )
+                docRef.update(checks as Map<String, Any>).addOnSuccessListener {
+                    Log.d("tag", "채팅 확인")
+                }.addOnFailureListener{
+                    Log.d("tag", "채팅 확인 실패")
+                }
+            }
+//            var map_0 = mutableMapOf<String, Any>()
+//            map_0["check_0"] = 1
+//            var map_1 = mutableMapOf<String, Any>()
+//            map_0["check_1"] = 1
+//
+//            MyApplication.db.collection("ChatRoomList").document(fieldPathUid)
+//                .update(map_0).addOnSuccessListener {
+//                    Toast.makeText(this, "채팅 확인", Toast.LENGTH_SHORT).show()
+//                }.addOnFailureListener{
+//                    Toast.makeText(this, "실패", Toast.LENGTH_SHORT).show()
+//                }
             if (collectionPath == "AIChat") {
                 // socket 통신
                 thread {
@@ -229,6 +300,66 @@ class ChatRoomActivity : AppCompatActivity() {
                 }
             }
 
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val collectionPath : String = destinationUid!!.split("/")?.get(0)
+        val fieldPathUid: String = destinationUid!!.split("/")?.get(1)
+        var docRef = MyApplication.db.collection(collectionPath).document(fieldPathUid)
+
+        docRef.get().addOnSuccessListener {
+            var checkList = arrayListOf<Int>()
+            checkList.add(1)
+            checkList.add(1)
+            var item = it.toObject<ChatData>()
+            if(item?.uid?.get(0) == uid) {
+                checkList[0] = 1
+                checkList[1] = item?.check?.get(1)!!
+            } else {
+                // uid[1] == 내 uid
+                checkList[0] = item?.check?.get(0)!!
+                checkList[1] = 1
+            }
+            var checks = hashMapOf(
+                "check" to checkList
+            )
+            docRef.update(checks as Map<String, Any>).addOnSuccessListener {
+                Log.d("tag", "채팅 확인")
+            }.addOnFailureListener{
+                Log.d("tag", "채팅 확인 실패")
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        val collectionPath : String = destinationUid!!.split("/")?.get(0)
+        val fieldPathUid: String = destinationUid!!.split("/")?.get(1)
+        var docRef = MyApplication.db.collection(collectionPath).document(fieldPathUid)
+
+        docRef.get().addOnSuccessListener {
+            var checkList = arrayListOf<Int>()
+            checkList.add(1)
+            checkList.add(1)
+            var item = it.toObject<ChatData>()
+            if(item?.uid?.get(0) == uid) {
+                checkList[0] = 1
+                checkList[1] = item?.check?.get(1)!!
+            } else {
+                // uid[1] == 내 uid
+                checkList[0] = item?.check?.get(0)!!
+                checkList[1] = 1
+            }
+            var checks = hashMapOf(
+                "check" to checkList
+            )
+            docRef.update(checks as Map<String, Any>).addOnSuccessListener {
+                Log.d("tag", "채팅 확인")
+            }.addOnFailureListener{
+                Log.d("tag", "채팅 확인 실패")
+            }
         }
     }
 

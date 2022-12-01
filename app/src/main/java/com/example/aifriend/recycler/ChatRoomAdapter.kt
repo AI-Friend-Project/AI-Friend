@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
+import com.example.aifriend.MyApplication
 import com.example.aifriend.R
 import com.example.aifriend.data.ChatData
 import com.example.aifriend.data.ChatRoomData
@@ -31,6 +32,7 @@ class ChatRoomAdapter(collectionPath: String,fieldPath: String): RecyclerView.Ad
     private var otherUser : OtherUser? = null
     private var fireStore: FirebaseFirestore? = null
     private var uid : String? = Firebase.auth.currentUser?.uid.toString()
+
 
     init {
         fireStore = FirebaseFirestore.getInstance()

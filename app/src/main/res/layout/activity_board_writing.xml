@@ -10,12 +10,28 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
         android:id="@+id/writing_title"
         android:hint="제목을 입력하세요"/>
+    <ImageView
+        android:layout_width="400dp"
+        android:layout_height="400dp"
+        android:layout_margin="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:id="@+id/writing_image"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:visibility="gone"/>
     <EditText
+        android:inputType="textMultiLine"
+        android:maxLines="10"
+        android:scrollbars="vertical"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
         android:id="@+id/writing_content"
         android:hint="내용을 입력하세요"/>
-
 </LinearLayout>

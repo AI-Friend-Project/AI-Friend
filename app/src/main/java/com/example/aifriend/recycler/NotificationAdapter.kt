@@ -14,10 +14,9 @@ import com.example.aifriend.databinding.ViewNotidataBinding
 import com.google.firebase.firestore.FieldValue
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.Calendar.getInstance
 
 @RequiresApi(Build.VERSION_CODES.O)
-class NotificationAdapter(val context: Context, val itemList: List<NotificationData>): RecyclerView.Adapter<NotificationAdapter.MyViewHolder>() {
+class NotificationAdapter(val context: Context, val itemList: MutableList<NotificationData>): RecyclerView.Adapter<NotificationAdapter.MyViewHolder>() {
     inner class MyViewHolder(val binding: ViewNotidataBinding) : RecyclerView.ViewHolder(binding.root){
         //
         private val notificationActivity = NotificationActivity.getInstance()

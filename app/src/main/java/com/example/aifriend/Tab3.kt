@@ -34,6 +34,8 @@ class Tab3 : Fragment() {
         binding.logoutBtn.setOnClickListener {
             MyApplication.auth.signOut()
             MyApplication.email=null
+
+            activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()
             startActivity(Intent(activity, MainActivity::class.java))
         }
     }

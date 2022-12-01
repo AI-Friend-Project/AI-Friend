@@ -9,4 +9,6 @@ data class ChatData(
     val uid: ArrayList<String?>? = null,
     var name: ArrayList<String?>? = null,
     var time: String? = null,
-    var key: String? = null)
+    var key: String? = null,
+    var check: ArrayList<Int?>? = null  // 0 : 안읽음 ,  1: 읽음
+)
