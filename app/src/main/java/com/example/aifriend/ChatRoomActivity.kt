@@ -20,6 +20,7 @@ import com.example.aifriend.Utils.Constants
 import com.example.aifriend.Utils.Constants.CHANNEL_ID
 import com.example.aifriend.Utils.Constants.CHANNEL_NAME
 import com.example.aifriend.Utils.Constants.FCM_MESSAGE_URL
+import com.example.aifriend.Utils.Constants.PORT
 import com.example.aifriend.data.ChatData
 import com.example.aifriend.data.ChatRoomData
 import com.example.aifriend.data.UserData
@@ -35,6 +36,9 @@ import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import java.net.Socket
+import kotlin.concurrent.thread
+
 
 /**
  * 채팅 화면 프래그먼트
@@ -115,6 +119,23 @@ class ChatRoomActivity : AppCompatActivity() {
                 }
                 chatEditText.text = null
             }
+            if (collectionPath == "AIChat") {
+                // socket 통신
+                thread {
+                    val ip = "ankylo.gachon.ac.kr"
+                    val port = 7000
+
+                    val socket = Socket(ip, port)
+                    val outStream = socket.outputStream
+
+                    val data = "AIchat" + uid!!
+                    outStream.write(data.toByteArray())
+
+                    socket.close()
+                }
+            }
+
+
 
         }
         chatRoom()

@@ -5,6 +5,7 @@
       <map>
         <entry key="app/src/main/res/drawable/bg_round_edittext.xml" value="0.1325" />
         <entry key="app/src/main/res/drawable/ic_add.xml" value="0.1325" />
+        <entry key="app/src/main/res/drawable/ic_baseline_fiber_new_24.xml" value="0.1235" />
         <entry key="app/src/main/res/drawable/ic_baseline_menu_24.xml" value="0.1325" />
         <entry key="app/src/main/res/drawable/ic_baseline_notifications_24.xml" value="0.1325" />
         <entry key="app/src/main/res/drawable/ic_baseline_send_24.xml" value="0.1325" />
@@ -20,6 +21,9 @@
         <entry key="app/src/main/res/layout/header.xml" value="0.18385416666666668" />
         <entry key="app/src/main/res/layout/item_board.xml" value="0.18385416666666668" />
         <entry key="app/src/main/res/layout/item_chat.xml" value="0.18385416666666668" />
+        <entry key="app/src/main/res/layout/item_chat_watched.xml" value="0.2078804347826087" />
+        <entry key="app/src/main/res/layout/notification.xml" value="0.2078804347826087" />
+        <entry key="app/src/main/res/layout/receiver_msgbox.xml" value="0.2078804347826087" />
         <entry key="app/src/main/res/layout/sender_msgbox.xml" value="0.18385416666666668" />
         <entry key="app/src/main/res/layout/view_navdata.xml" value="0.17395833333333333" />
         <entry key="app/src/main/res/layout/view_notidata.xml" value="0.17395833333333333" />

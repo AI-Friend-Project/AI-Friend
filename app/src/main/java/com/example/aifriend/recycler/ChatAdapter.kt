@@ -5,18 +5,23 @@ import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aifriend.ChatRoomActivity
 import com.example.aifriend.R
 import com.example.aifriend.data.ChatData
+import com.example.aifriend.data.ReceivedChatViewType
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import kotlin.properties.Delegates
 import androidx.recyclerview.widget.DiffUtil as Diff
 
 /**
@@ -27,6 +32,7 @@ class ChatAdapter: RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
     private var uid : String? = null
     private var fireStore: FirebaseFirestore? = null
     private val destinationUsers: ArrayList<String> = arrayListOf()
+    var watched: Int = 0
 
     init {
         uid = Firebase.auth.currentUser?.uid.toString()
@@ -45,16 +51,13 @@ class ChatAdapter: RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
                     chatList.add(item!!)
                 }
                 notifyDataSetChanged()
-
             }
-
         // DiffUtil 로 갱신 해보기
 
     }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-
         return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_chat, parent, false))
     }
 
@@ -62,6 +65,7 @@ class ChatAdapter: RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val chatTitleTextView: TextView = view.findViewById(R.id.chatTitleTextView)
         val chatMessageTextView: TextView = view.findViewById(R.id.chatMessageTextView)
+        val receivedChatNotificationIcon: ImageView = view.findViewById(R.id.receivedChatNotificationIcon)
     }
 
 
@@ -78,9 +82,10 @@ class ChatAdapter: RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
             holder.chatTitleTextView.text = chatList[position].name?.get(0)
         }
         holder.chatMessageTextView.text = chatList[position].lastChat
-
+       
         //채팅창 선책 시 이동
         holder.itemView.setOnClickListener {
+            holder.receivedChatNotificationIcon.visibility = INVISIBLE
             val intent = Intent(holder.itemView.context, ChatRoomActivity::class.java)
             intent.putExtra("destinationUid", chatList[position].key)
             holder.itemView.context?.startActivity(intent)
@@ -92,5 +97,12 @@ class ChatAdapter: RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
         return chatList.size
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return if (watched == 1) {
+            1
+        } else {
+            0
+        }
+    }
 
 }

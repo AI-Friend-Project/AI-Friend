@@ -18,6 +18,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         buildConfigField "String", "FCM_SERVER_KEY", properties["fcm_server_key"]
+        buildConfigField "String", "IP_ADDRESS", properties["ip_address"]
 
     }
 

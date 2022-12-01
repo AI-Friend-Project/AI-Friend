@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,9 +18,11 @@ import com.example.aifriend.recycler.ChatAdapter
 class ChatFragment : Fragment() {
 
     private val chatList = ArrayList<ChatData>()
+    var count = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        count ++
     }
 
     override fun onCreateView(
@@ -31,12 +34,23 @@ class ChatFragment : Fragment() {
         val aiChatRecyclerView = view.findViewById<RecyclerView>(R.id.aiChatRecyclerView)
         val chatRecyclerView = view.findViewById<RecyclerView>(R.id.chatFragmentRecyclerView)
 
+        val chatItemView = inflater.inflate(R.layout.item_chat, container, false)
+        val receivedChatNotificationIcon: ImageView = chatItemView.findViewById(R.id.receivedChatNotificationIcon)
         // AI 채팅방, 상대 채팅방 띄우기
         aiChatRecyclerView.layoutManager = LinearLayoutManager(context)
         chatRecyclerView.layoutManager = LinearLayoutManager(context)
 
         aiChatRecyclerView.adapter = AiChatAdapter()
         chatRecyclerView.adapter = ChatAdapter()
+        if (count == 0) {
+            receivedChatNotificationIcon.visibility = View.VISIBLE
+        } else {
+            receivedChatNotificationIcon.visibility = View.INVISIBLE
+            count = 1
+
+        }
+        receivedChatNotificationIcon.visibility = View.INVISIBLE
+
 
         return view
     }
