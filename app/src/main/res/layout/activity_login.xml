@@ -5,37 +5,54 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:orientation="vertical">
-
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:id="@+id/main_toolbar"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="로그인"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="아이디 입력"/>
+        android:text="아이디"
+        android:layout_marginTop="5dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:textSize="15dp"/>
     <EditText
         android:id="@+id/idEditView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="비밀번호 입력"/>
+        android:text="비밀번호"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="5dp"
+        android:textSize="15dp"/>
     <EditText
         android:id="@+id/pwEditView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPassword"/>
+        android:inputType="textPassword"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"/>
     <Button
         android:id="@+id/loginBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="로그인 하기"/>
+        android:text="로그인 하기"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="100dp"/>
     <Button
         android:id="@+id/joinBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="회원가입 하기"/>
+        android:text="회원가입 하기"
+        android:textColor="@color/black"
+        android:background="#00ff0000"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="100dp"/>
 
 </LinearLayout>

@@ -1,28 +1,25 @@
 package com.example.aifriend.recycler
 
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aifriend.FavdetailActivity
 import com.example.aifriend.MyApplication
-import com.example.aifriend.ViewDetailActivity
 import com.example.aifriend.data.UserData
-import com.example.aifriend.databinding.ViewUserdataBinding
+import com.example.aifriend.databinding.ViewUserdata2Binding
 import com.google.firebase.firestore.FieldValue
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @RequiresApi(Build.VERSION_CODES.O)
-class FavDetailAdapter(val context: Context, val usersList: List<UserData>): RecyclerView.Adapter<FavDetailAdapter.MyViewHolder>(){
+class UserMoreAdapter(val context: Context, val usersList: List<UserData>): RecyclerView.Adapter<UserMoreAdapter.MyViewHolder>(){
 
-    inner class MyViewHolder(val binding: ViewUserdataBinding) : RecyclerView.ViewHolder(binding.root){
+    inner class MyViewHolder(val binding: ViewUserdata2Binding) : RecyclerView.ViewHolder(binding.root){
 
         //
         private var favDetailActivity = FavdetailActivity.getInstance()
@@ -33,7 +30,6 @@ class FavDetailAdapter(val context: Context, val usersList: List<UserData>): Rec
             name = data.name
             email = data.email
             binding.NameView.text = data.name
-            binding.emailView.text = data.email
         }
         init {
             binding.requestBtn.setOnClickListener {
@@ -48,7 +44,7 @@ class FavDetailAdapter(val context: Context, val usersList: List<UserData>): Rec
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
-        return MyViewHolder(ViewUserdataBinding.inflate(layoutInflater))
+        return MyViewHolder(ViewUserdata2Binding.inflate(layoutInflater))
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
@@ -66,7 +62,7 @@ class FavDetailAdapter(val context: Context, val usersList: List<UserData>): Rec
 
     private fun request(email: String){
         MyApplication.db.collection("user").document(MyApplication.email.toString())
-        .update("request",FieldValue.arrayUnion(email))
+            .update("request", FieldValue.arrayUnion(email))
         Toast.makeText(context, "친구 요청을 보냈습니다.", Toast.LENGTH_SHORT).show()
         Log.d("tag", email.toString())
         //친구 요청 알림 (알림 - 친구 요청, 시스템 알림)
@@ -81,13 +77,12 @@ class FavDetailAdapter(val context: Context, val usersList: List<UserData>): Rec
             "requestEmail" to MyApplication.email
         )
         MyApplication.db.collection("user").document(email.toString())
-        .collection("notification").add(notification)
+            .collection("notification").add(notification)
         //요청 친구 목록에 추가
         MyApplication.db.collection("user").document(MyApplication.email.toString())
-        .update("request",FieldValue.arrayUnion(email))
+            .update("request", FieldValue.arrayUnion(email))
         MyApplication.db.collection("user").document(email.toString())
-        .update("request",FieldValue.arrayUnion(MyApplication.email.toString()))
+            .update("request", FieldValue.arrayUnion(MyApplication.email.toString()))
         //notifyDataSetChanged()
     }
 }
-

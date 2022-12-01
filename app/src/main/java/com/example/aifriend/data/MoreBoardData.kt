@@ -6,4 +6,6 @@ class MoreBoardData {
     var content : String? = null
     var time : String? = null
     var email : String? = null
+    var name : String? = null
+    var favName : String? = null
 }

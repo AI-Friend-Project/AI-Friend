@@ -10,7 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.aifriend.data.UserData
 import com.example.aifriend.databinding.ActivityFriendViewBinding
-import com.example.aifriend.recycler.FavDetailAdapter
+import com.example.aifriend.recycler.UserAdapter
+import com.example.aifriend.recycler.UserMoreAdapter
 
 @RequiresApi(Build.VERSION_CODES.O)
 class FriendViewActivity:AppCompatActivity() {
@@ -32,7 +33,7 @@ class FriendViewActivity:AppCompatActivity() {
         val toolbar = binding.mainToolbar as androidx.appcompat.widget.Toolbar
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title = "친구추천 더보기"
+        supportActionBar?.title = favName
     }
 
     //favdetailActivity와 동일
@@ -128,7 +129,7 @@ class FriendViewActivity:AppCompatActivity() {
             Log.d("tag", "item count: ${itemList.count()}, user count: ${userCount}")
             //세로스크롤
             binding.moreFriendView.layoutManager = LinearLayoutManager(this)
-            binding.moreFriendView.adapter = FavDetailAdapter(this, itemList)
+            binding.moreFriendView.adapter = UserMoreAdapter(this, itemList)
         }
     }
 
