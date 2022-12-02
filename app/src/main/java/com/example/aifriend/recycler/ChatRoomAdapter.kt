@@ -1,15 +1,12 @@
 package com.example.aifriend.recycler
 
 import android.annotation.SuppressLint
+import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
-import com.example.aifriend.MyApplication
-import com.example.aifriend.R
-import com.example.aifriend.data.ChatData
 import com.example.aifriend.data.ChatRoomData
 import com.example.aifriend.data.OtherUser
 import com.example.aifriend.data.ViewType
@@ -77,9 +74,10 @@ class ChatRoomAdapter(collectionPath: String,fieldPath: String): RecyclerView.Ad
         private var msgTextView = binding.msgTextView
         var timeTextView = binding.timeTextView
 
+        @RequiresApi(Build.VERSION_CODES.O)
         fun bind(item: ChatRoomData) {
             msgTextView.text = item.message
-            timeTextView.text = item.time
+            timeTextView.text = item.time?.let { calculateTime(it) }
         }
     }
 
@@ -88,9 +86,10 @@ class ChatRoomAdapter(collectionPath: String,fieldPath: String): RecyclerView.Ad
         private var timeTextView = binding.timeTextView
         private var nameTextView = binding.nameTextView
 
+        @RequiresApi(Build.VERSION_CODES.O)
         fun bind(item: ChatRoomData) {
             msgTextView.text = item.message
-            timeTextView.text = item.time
+            timeTextView.text = item.time?.let { calculateTime(it) }
             nameTextView.text = item.name
             item.name?.let { Log.d("tag", it) }
         }
@@ -133,8 +132,8 @@ class ChatRoomAdapter(collectionPath: String,fieldPath: String): RecyclerView.Ad
 
 }
 
-//fun calculateTime(time: Long): String {
-//    val dateFormat = SimpleDateFormat("MM/dd. hh:mm")
-//
-//    return dateFormat.format(Date(time)).toString()
-//}
+@RequiresApi(Build.VERSION_CODES.O)
+fun calculateTime(date: Date): String {
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA)
+    return dateFormat.format(date)
+}

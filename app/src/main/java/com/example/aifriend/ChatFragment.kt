@@ -42,14 +42,6 @@ class ChatFragment : Fragment() {
 
         aiChatRecyclerView.adapter = AiChatAdapter()
         chatRecyclerView.adapter = ChatAdapter()
-        if (count == 0) {
-            receivedChatNotificationIcon.visibility = View.VISIBLE
-        } else {
-            receivedChatNotificationIcon.visibility = View.INVISIBLE
-            count = 1
-
-        }
-        receivedChatNotificationIcon.visibility = View.INVISIBLE
 
 
         return view

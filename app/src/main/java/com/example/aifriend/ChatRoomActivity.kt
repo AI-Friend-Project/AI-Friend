@@ -1,27 +1,13 @@
 package com.example.aifriend
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
-import android.graphics.Color
-import android.net.Network
 import android.os.Build
 import android.os.Bundle
-import android.os.Message
 import android.util.Log
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.aifriend.Utils.Constants
-import com.example.aifriend.Utils.Constants.CHANNEL_ID
-import com.example.aifriend.Utils.Constants.CHANNEL_NAME
 import com.example.aifriend.Utils.Constants.FCM_MESSAGE_URL
-import com.example.aifriend.Utils.Constants.PORT
 import com.example.aifriend.data.ChatData
 import com.example.aifriend.data.ChatRoomData
 import com.example.aifriend.data.UserData
@@ -33,11 +19,10 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import org.json.JSONObject
 import java.net.HttpURLConnection
+import java.net.Socket
 import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
-import java.net.Socket
 import kotlin.concurrent.thread
 
 
@@ -57,6 +42,7 @@ class ChatRoomActivity : AppCompatActivity() {
     private lateinit var keyboardVisibility: KeyboardVisibility
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChatRoomBinding.inflate(layoutInflater)
@@ -65,8 +51,8 @@ class ChatRoomActivity : AppCompatActivity() {
         val chatSendButton = binding.chatSendButton
 
         val time = System.currentTimeMillis()
-        val dateFormat = SimpleDateFormat("yyyy.MM.dd HH:mm:ss",Locale.KOREA)
-        val curTime = dateFormat.format(Date(time)).toString()
+        var date = Date(time)
+
         destinationUid = intent.getStringExtra("destinationUid")
         val collectionPath : String = destinationUid!!.split("/")?.get(0)
         val fieldPathUid: String = destinationUid!!.split("/")?.get(1)
@@ -125,13 +111,13 @@ class ChatRoomActivity : AppCompatActivity() {
          *  채팅 보내기
          **/
         chatSendButton.setOnClickListener {
-            val chat = ChatRoomData(name, chatEditText.text.toString(), curTime, uid)
-//            recyclerView?.scrollToPosition(chatAdapter.itemCount - 1)
+            val chat = ChatRoomData(name, chatEditText.text.toString(), date, uid)
+
             //수정 작업 필요
             var chatDataMap = mutableMapOf<String,Any>()
             chatDataMap["key"] = destinationUid.toString()
             chatDataMap["lastChat"] = chatEditText.text.toString()
-            chatDataMap["time"] = curTime
+            chatDataMap["time"] = date
             sendPostToFCM(destinationUid!!, uid!!, name, chatEditText.text.toString())
             //저장
             if(chatRoomUid == null) {
@@ -362,11 +348,6 @@ class ChatRoomActivity : AppCompatActivity() {
             }
         }
     }
-
-
-
-
-
 
 
 }
