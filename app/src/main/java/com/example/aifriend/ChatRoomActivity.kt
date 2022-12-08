@@ -26,6 +26,7 @@ import java.net.HttpURLConnection
 import java.net.Socket
 import java.net.URL
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.concurrent.thread
 
 
@@ -41,6 +42,7 @@ class ChatRoomActivity : AppCompatActivity() {
     private var destinationUid : String? = null
     private var recyclerView: RecyclerView? = null
     private var name: String? = null
+    private var userName: String?  = null
     private var aiChatRecyclerView: RecyclerView? = null
     private lateinit var keyboardVisibility: KeyboardVisibility
 
@@ -55,17 +57,25 @@ class ChatRoomActivity : AppCompatActivity() {
 
         val time = System.currentTimeMillis()
         var date = Date(time)
+        var data : ArrayList<String> = intent.getSerializableExtra("chatInfo") as ArrayList<String>
+        Log.d("tag", data.toString())
 
-        destinationUid = intent.getStringExtra("destinationUid")
+        destinationUid = data?.get(0).toString()
+        userName = data?.get(1).toString()
         val collectionPath : String = destinationUid!!.split("/")?.get(0)
         val fieldPathUid: String = destinationUid!!.split("/")?.get(1)
         uid = Firebase.auth.currentUser?.uid.toString()
+        getName()
+
         //툴바
         val toolbar = binding.chatToolbar as androidx.appcompat.widget.Toolbar
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-        getName(collectionPath,fieldPathUid)
+        if(collectionPath != "AIChat") {
+            supportActionBar?.title = userName
+        } else {
+            supportActionBar?.title = "AI"
+        }
         recyclerView = binding.chatRoomActivityRecyclerView
 
 
@@ -213,10 +223,9 @@ class ChatRoomActivity : AppCompatActivity() {
 
     }
 
-    private fun getName(collectionPath: String, fieldPath: String) {
+    private fun getName() {
         var a: String? = null
         val userList = ArrayList<UserData>()
-        var docRef = MyApplication.db.collection(collectionPath).document(fieldPath)
 
         fireStore?.collection("user")
             ?.whereEqualTo("uid", uid!!)
@@ -229,18 +238,6 @@ class ChatRoomActivity : AppCompatActivity() {
                     userList.add(item!!)
                 }
                 name = userList[0].name
-                if(collectionPath == "AIChat") {
-                    supportActionBar?.title = "AI"
-                } else {
-                    docRef.get().addOnSuccessListener {
-                        var item = it.toObject<ChatData>()
-                        if(item?.name?.get(0) == name) {
-                            supportActionBar?.title = item?.name?.get(1)
-                        } else {
-                            supportActionBar?.title = item?.name?.get(0)
-                        }
-                    }
-                }
             }
     }
 

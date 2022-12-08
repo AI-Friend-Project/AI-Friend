@@ -15,14 +15,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.aifriend.ChatRoomActivity
 import com.example.aifriend.R
 import com.example.aifriend.data.ChatData
-import com.example.aifriend.data.ReceivedChatViewType
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import kotlin.properties.Delegates
-import androidx.recyclerview.widget.DiffUtil as Diff
 
 /**
  * 채팅방 리스트 어댑터
@@ -73,10 +69,13 @@ class ChatAdapter: RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
     @SuppressLint("WrongConstant")
     @RequiresApi(31)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
+        val chatInfo: ArrayList<String> = ArrayList()
+        chatList[position].key?.let { chatInfo.add(it) }
         // 계정에 따라 상대방 이름 다르게 보이기
         if(chatList[position].uid?.get(0) == uid) {
             holder.chatTitleTextView.text = chatList[position].name?.get(1)
+            chatList[position].name?.get(1)?.let { chatInfo.add(it.toString()) }
+
             if(chatList[position].check?.get(0) == 0) {
                 holder.receivedChatNotificationIcon.visibility = VISIBLE
             } else {
@@ -85,6 +84,8 @@ class ChatAdapter: RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
         }
         else {
             holder.chatTitleTextView.text = chatList[position].name?.get(0)
+            chatList[position].name?.get(0)?.let { chatInfo.add(it.toString()) }
+
             if(chatList[position].check?.get(1) == 0) {
                 holder.receivedChatNotificationIcon.visibility = VISIBLE
             } else {
@@ -96,7 +97,8 @@ class ChatAdapter: RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
         //채팅창 선책 시 이동
         holder.itemView.setOnClickListener {
             val intent = Intent(holder.itemView.context, ChatRoomActivity::class.java)
-            intent.putExtra("destinationUid", chatList[position].key)
+            Log.d("tag", chatInfo.toString())
+            intent.putExtra("chatInfo", chatInfo)
             holder.itemView.context?.startActivity(intent)
         }
 
