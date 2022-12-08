@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aifriend.FavdetailActivity
+import com.example.aifriend.FriendViewActivity
 import com.example.aifriend.MyApplication
 import com.example.aifriend.data.UserData
 import com.example.aifriend.databinding.ViewUserdata2Binding
@@ -22,7 +23,7 @@ class UserMoreAdapter(val context: Context, val usersList: List<UserData>): Recy
     inner class MyViewHolder(val binding: ViewUserdata2Binding) : RecyclerView.ViewHolder(binding.root){
 
         //
-        private var favDetailActivity = FavdetailActivity.getInstance()
+        private var friendViewActivity = FriendViewActivity.getInstance()
 
         var name : String? = null
         var email : String? = null
@@ -37,7 +38,7 @@ class UserMoreAdapter(val context: Context, val usersList: List<UserData>): Recy
                 //수락하기 버튼 누르면 수락 버튼 사라짐->필요없어짐
                 //binding.requestBtn.visibility = View.INVISIBLE
                 //수락하기 누르면 친구 추천 리스트 업데이트
-                favDetailActivity.getFavUsers()
+                friendViewActivity.getFavUsers2()
             }
         }
     }
