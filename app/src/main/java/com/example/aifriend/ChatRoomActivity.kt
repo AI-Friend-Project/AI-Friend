@@ -7,6 +7,8 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.aifriend.BuildConfig.IP_ADDRESS
+import com.example.aifriend.BuildConfig.SERVER_PORT
 import com.example.aifriend.Utils.Constants.FCM_MESSAGE_URL
 import com.example.aifriend.data.ChatData
 import com.example.aifriend.data.ChatRoomData
@@ -179,14 +181,12 @@ class ChatRoomActivity : AppCompatActivity() {
             if (collectionPath == "AIChat") {
                 // socket 통신
                 thread {
-                    val ip = "ankylo.gachon.ac.kr"
-                    val port = 7000
-
-                    val socket = Socket(ip, port)
+                    val socket = Socket(IP_ADDRESS, SERVER_PORT)
                     val outStream = socket.outputStream
 
                     val data = "AIchat" + uid!!
-                    outStream.write(data.toByteArray())
+                    val charset = Charsets.UTF_8
+                    outStream.write(data.toByteArray(charset))
 
                     socket.close()
                 }
@@ -225,64 +225,77 @@ class ChatRoomActivity : AppCompatActivity() {
     }
 
     private fun sendPostToFCM(destinationUid: String, myUid: String, pTitle: String?, pMessage: String?) {
-        val collectionPath : String = destinationUid!!.split("/")?.get(0)
+        val collectionPath: String = destinationUid!!.split("/")?.get(0)
         val fieldPathUid: String = destinationUid!!.split("/")?.get(1)
         val docRef = fireStore.collection(collectionPath).document(fieldPathUid)
-        var userUid : String = ""
-        docRef.get().addOnSuccessListener {
-            Log.d("tag", it.data.toString())
-            var item = it.toObject<ChatData>()
-            if (item != null) {
-                userUid = if(item.uid?.get(0)?.equals(myUid) == true) {
-                    item.uid?.get(1).toString()
-                } else {
-                    item.uid?.get(0).toString()
-                }
-            }
-            if (userUid != null) {
-                var token : String = ""
-                fireStore.collection("user").whereEqualTo("uid", userUid).addSnapshotListener { value, error ->
-                    for (snapshot in value!!.documents) {
-                        var item = snapshot.toObject<UserData>()
-                        token = item?.token.toString()
+        var userUid: String = ""
+        if (collectionPath != "AIChat") {
+            docRef.get().addOnSuccessListener {
+                Log.d("tag", it.data.toString())
+                var item = it.toObject<ChatData>()
+                if (item != null) {
+                    userUid = if (item.uid?.get(0)?.equals(myUid) == true) {
+                        item.uid?.get(1).toString()
+                    } else {
+                        item.uid?.get(0).toString()
                     }
-
-                    Thread(
-                        Runnable {
-                            kotlin.run {
-                                try {
-                                    val root = JSONObject()
-                                    val notification = JSONObject()
-
-                                    notification.put("title", pTitle)
-                                    notification.put("body", pMessage)
-
-
-                                    root.put("data", notification) // 여기서 data와 notification 두가지 중 설정하면 된다.
-                                    root.put("to", token)
-
-                                    val url = URL(FCM_MESSAGE_URL)!!
-                                    val conn = url.openConnection() as HttpURLConnection
-                                    conn.requestMethod = "POST"
-                                    conn.doOutput = true
-                                    conn.doInput = true
-                                    conn.addRequestProperty("Authorization", "key=${BuildConfig.FCM_SERVER_KEY}") //받아 온 서버키를 넣어주세요
-                                    conn.setRequestProperty("Accept", "application/json")
-                                    conn.setRequestProperty("Content-type", "application/json")
-
-                                    val os = conn.outputStream
-                                    os.write(root.toString().toByteArray(Charsets.UTF_8));
-
-                                    os.flush();
-                                    conn.responseCode
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
-                                }
+                }
+                if (userUid != null) {
+                    var token: String = ""
+                    fireStore.collection("user")
+                        .whereEqualTo("uid", userUid)
+                        .addSnapshotListener { value, error ->
+                            for (snapshot in value!!.documents) {
+                                var item = snapshot.toObject<UserData>()
+                                token = item?.token.toString()
                             }
 
-                        }
-                    ).start()
+                            Thread(
+                                Runnable {
+                                    kotlin.run {
+                                        try {
+                                            val root = JSONObject()
+                                            val notification = JSONObject()
 
+                                            notification.put("title", pTitle)
+                                            notification.put("body", pMessage)
+
+
+                                            root.put(
+                                                "data",
+                                                notification
+                                            ) // 여기서 data와 notification 두가지 중 설정하면 된다.
+                                            root.put("to", token)
+
+                                            val url = URL(FCM_MESSAGE_URL)!!
+                                            val conn = url.openConnection() as HttpURLConnection
+                                            conn.requestMethod = "POST"
+                                            conn.doOutput = true
+                                            conn.doInput = true
+                                            conn.addRequestProperty(
+                                                "Authorization",
+                                                "key=${BuildConfig.FCM_SERVER_KEY}"
+                                            ) //받아 온 서버키를 넣어주세요
+                                            conn.setRequestProperty("Accept", "application/json")
+                                            conn.setRequestProperty(
+                                                "Content-type",
+                                                "application/json"
+                                            )
+
+                                            val os = conn.outputStream
+                                            os.write(root.toString().toByteArray(Charsets.UTF_8));
+
+                                            os.flush();
+                                            conn.responseCode
+                                        } catch (e: Exception) {
+                                            e.printStackTrace()
+                                        }
+                                    }
+
+                                }
+                            ).start()
+
+                        }
                 }
             }
 
