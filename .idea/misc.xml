@@ -6,17 +6,26 @@
         <entry key="app/src/main/res/drawable/bg_round_edittext.xml" value="0.1325" />
         <entry key="app/src/main/res/drawable/edge.xml" value="0.1235" />
         <entry key="app/src/main/res/drawable/edge2.xml" value="0.1235" />
+        <entry key="app/src/main/res/drawable/edit_text_border.xml" value="0.1235" />
         <entry key="app/src/main/res/drawable/ic_add.xml" value="0.1325" />
         <entry key="app/src/main/res/drawable/ic_baseline_account_circle_24.xml" value="0.1235" />
         <entry key="app/src/main/res/drawable/ic_baseline_add_circle_24.xml" value="0.1235" />
+        <entry key="app/src/main/res/drawable/ic_baseline_arrow_left_24.xml" value="0.1235" />
         <entry key="app/src/main/res/drawable/ic_baseline_fiber_new_24.xml" value="0.1235" />
         <entry key="app/src/main/res/drawable/ic_baseline_menu_24.xml" value="0.1325" />
         <entry key="app/src/main/res/drawable/ic_baseline_notifications_24.xml" value="0.1325" />
+        <entry key="app/src/main/res/drawable/ic_baseline_play_arrow_24.xml" value="0.1235" />
+        <entry key="app/src/main/res/drawable/ic_baseline_play_arrow_24_gray.xml" value="0.1235" />
         <entry key="app/src/main/res/drawable/ic_baseline_send_24.xml" value="0.1325" />
         <entry key="app/src/main/res/drawable/ic_baseline_textsms_24.xml" value="0.1325" />
+        <entry key="app/src/main/res/drawable/receiver_msgbox_border.xml" value="0.1235" />
+        <entry key="app/src/main/res/drawable/receiver_msgbox_border2.xml" value="0.10073852539062503" />
+        <entry key="app/src/main/res/drawable/send_border.xml" value="0.1235" />
+        <entry key="app/src/main/res/drawable/sender_msgbox_border.xml" value="0.1235" />
+        <entry key="app/src/main/res/drawable/toolbar_border.xml" value="0.1235" />
         <entry key="app/src/main/res/layout/activity_board_view.xml" value="0.11979166666666667" />
         <entry key="app/src/main/res/layout/activity_board_writing.xml" value="0.11979166666666667" />
-        <entry key="app/src/main/res/layout/activity_chat_room.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/activity_chat_room.xml" value="0.2808883666992188" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.18385416666666668" />
         <entry key="app/src/main/res/layout/activity_view_detail.xml" value="0.14583333333333334" />
         <entry key="app/src/main/res/layout/fragment_chat.xml" value="0.18385416666666668" />
@@ -28,14 +37,16 @@
         <entry key="app/src/main/res/layout/item_chat.xml" value="0.18385416666666668" />
         <entry key="app/src/main/res/layout/item_chat_watched.xml" value="0.2078804347826087" />
         <entry key="app/src/main/res/layout/notification.xml" value="0.2078804347826087" />
-        <entry key="app/src/main/res/layout/receiver_msgbox.xml" value="0.2078804347826087" />
-        <entry key="app/src/main/res/layout/sender_msgbox.xml" value="0.18385416666666668" />
+        <entry key="app/src/main/res/layout/receiver_msgbox.xml" value="0.62372058370839" />
+        <entry key="app/src/main/res/layout/receiver_msgbox2.xml" value="1.0770858764648439" />
+        <entry key="app/src/main/res/layout/sender_msgbox.xml" value="0.1" />
         <entry key="app/src/main/res/layout/view_favdata.xml" value="0.14583333333333334" />
         <entry key="app/src/main/res/layout/view_navdata.xml" value="0.17395833333333333" />
         <entry key="app/src/main/res/layout/view_notidata.xml" value="0.17395833333333333" />
         <entry key="app/src/main/res/layout/view_userdata2.xml" value="0.14583333333333334" />
         <entry key="app/src/main/res/menu/menu_add.xml" value="0.14583333333333334" />
         <entry key="app/src/main/res/menu/menu_board_view.xml" value="0.14583333333333334" />
+        <entry key="app/src/main/res/menu/menu_chat.xml" value="0.28489583333333335" />
         <entry key="app/src/main/res/menu/menu_main.xml" value="0.18385416666666668" />
         <entry key="app/src/main/res/menu/menu_writing.xml" value="0.14583333333333334" />
         <entry key="app/src/main/res/xml/network_security_config.xml" value="0.1" />

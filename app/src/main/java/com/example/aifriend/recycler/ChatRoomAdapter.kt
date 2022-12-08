@@ -32,6 +32,7 @@ class ChatRoomAdapter(collectionPath: String,fieldPath: String): RecyclerView.Ad
 
 
     init {
+
         fireStore = FirebaseFirestore.getInstance()
 
         // 채팅 목록 가져오기
@@ -90,7 +91,11 @@ class ChatRoomAdapter(collectionPath: String,fieldPath: String): RecyclerView.Ad
         fun bind(item: ChatRoomData) {
             msgTextView.text = item.message
             timeTextView.text = item.time?.let { calculateTime(it) }
-            nameTextView.text = item.name
+            if(item.name != null) {
+                nameTextView.text = item.name
+            } else {
+                nameTextView.text = "AI"
+            }
             item.name?.let { Log.d("tag", it) }
         }
 

@@ -1,8 +1,10 @@
 package com.example.aifriend
 
+import android.R
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,7 +25,6 @@ import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.Socket
 import java.net.URL
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.concurrent.thread
 
@@ -59,8 +60,14 @@ class ChatRoomActivity : AppCompatActivity() {
         val collectionPath : String = destinationUid!!.split("/")?.get(0)
         val fieldPathUid: String = destinationUid!!.split("/")?.get(1)
         uid = Firebase.auth.currentUser?.uid.toString()
+        //툴바
+        val toolbar = binding.chatToolbar as androidx.appcompat.widget.Toolbar
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        getName(collectionPath,fieldPathUid)
         recyclerView = binding.chatRoomActivityRecyclerView
-        getName()
+
 
 
         /**
@@ -206,9 +213,10 @@ class ChatRoomActivity : AppCompatActivity() {
 
     }
 
-    private fun getName() {
+    private fun getName(collectionPath: String, fieldPath: String) {
         var a: String? = null
         val userList = ArrayList<UserData>()
+        var docRef = MyApplication.db.collection(collectionPath).document(fieldPath)
 
         fireStore?.collection("user")
             ?.whereEqualTo("uid", uid!!)
@@ -221,6 +229,18 @@ class ChatRoomActivity : AppCompatActivity() {
                     userList.add(item!!)
                 }
                 name = userList[0].name
+                if(collectionPath == "AIChat") {
+                    supportActionBar?.title = "AI"
+                } else {
+                    docRef.get().addOnSuccessListener {
+                        var item = it.toObject<ChatData>()
+                        if(item?.name?.get(0) == name) {
+                            supportActionBar?.title = item?.name?.get(1)
+                        } else {
+                            supportActionBar?.title = item?.name?.get(0)
+                        }
+                    }
+                }
             }
     }
 
@@ -360,6 +380,12 @@ class ChatRoomActivity : AppCompatActivity() {
                 Log.d("tag", "채팅 확인 실패")
             }
         }
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.home -> finish()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
 

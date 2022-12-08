@@ -11,4 +11,8 @@
     <color name="colorPrimary">#939597</color>
     <color name="colorPrimary2">#FFFFFF</color>
     <color name="colorPrimaryDark">#121319</color>
+
+    <color name="mainBlue">#6495EB</color>
+    <color name="mainDarkBlue">#4682B4</color>
+    <color name="mainGray">#F1F1F1</color>
 </resources>
