@@ -20,6 +20,17 @@ class FriendViewActivity:AppCompatActivity() {
     private var userCount : Int = 0
     private var favName : String? = null
 
+    //
+    init{
+        instance = this
+    }
+    companion object{
+        private var instance:FriendViewActivity?=null
+        fun getInstance():FriendViewActivity{
+            return instance!!
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -27,7 +38,7 @@ class FriendViewActivity:AppCompatActivity() {
         setContentView(binding.root)
 
         favName = intent.getStringExtra("favName").toString()
-        getFavUsers() //친구 목록 불러오기
+        getFavUsers2() //친구 목록 불러오기
 
         //툴바
         val toolbar = binding.mainToolbar as androidx.appcompat.widget.Toolbar
@@ -37,7 +48,7 @@ class FriendViewActivity:AppCompatActivity() {
     }
 
     //favdetailActivity와 동일
-    fun getFavUsers(){
+    fun getFavUsers2(){
         //itemlist 리셋필요
         itemList = ArrayList()
         MyApplication.db.collection("fav").document(favName.toString())
