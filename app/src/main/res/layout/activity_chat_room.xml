@@ -45,6 +45,7 @@
                 android:layout_weight="1"
                 android:hint="Type the message"
                 android:inputType="textMultiLine"
+                android:privateImeOptions="defaultInputted=korean"
                 android:padding="10dp"
                 android:paddingStart="20dp"
                 android:layout_margin="5dp"
