@@ -11,16 +11,31 @@
         android:text="name"
         android:layout_margin="5dp"
         android:layout_alignParentLeft="true"/>
-
+<!--    <ImageView-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginLeft="-8dp"-->
+<!--        android:layout_alignTop="@id/msgTextView"-->
+<!--        android:layout_marginTop="1dp"-->
+<!--        android:src="@drawable/ic_baseline_arrow_left_24" />-->
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="-7dp"
+        android:layout_alignTop="@id/msgTextView"
+        android:rotation="210"
+        android:layout_marginTop="1dp"
+        android:src="@drawable/ic_baseline_play_arrow_24" />
 
     <TextView
         android:id="@+id/msgTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hello."
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="@color/white"
         android:layout_below="@+id/nameTextView"
         android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
         android:padding="12dp"
         android:maxWidth="250dp"
         android:background="@drawable/receiver_msgbox_border"/>
@@ -33,6 +48,7 @@
         android:layout_toRightOf="@id/msgTextView"
         android:layout_marginLeft="8dp"
         android:layout_alignBottom="@id/msgTextView"/>
+
 
 
 </RelativeLayout>

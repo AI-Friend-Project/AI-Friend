@@ -125,12 +125,15 @@ class JoinActivity: AppCompatActivity() {
         val docKey = "AIChat/" + newChat?.id    // 문서 id 받아오기
         val names = arrayListOf<String>("AI", "AI") // name : AI 로 설정 - 채팅방 리스트에 AI 라고 뜨도록
         val users = arrayListOf<String>(uid!!)  //  사용자 uid 받아옴 - 각 사용자마다 문서가 생성되므로
-
+        val checkList = arrayListOf<Int>()
+        checkList?.add(0)
+        checkList?.add(0)
         // hashMap data 초기화
         val data = hashMapOf(
             "key" to docKey,
             "lastChat" to "대화를 시작해보세요.",
             "name" to names,
+            "check" to checkList,
             "uid" to users,
         )
         // 데이터 추가

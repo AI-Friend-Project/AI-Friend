@@ -93,18 +93,22 @@ class NavAdapter(val context: Context, val itemList: List<UserData>): RecyclerVi
                     val docKey = "ChatRoomList/" + newChat?.id    // 문서 id 받아오기
                     val names = arrayListOf<String>(myName!!) // name : AI 로 설정 - 채팅방 리스트에 AI 라고 뜨도록
                     names.add(userName)
-
+                    val checkList = arrayListOf<Int>()
+                    checkList?.add(1)
+                    checkList?.add(1)
                     // hashMap data 초기화
                     val data = hashMapOf(
                         "key" to docKey,
                         "lastChat" to "대화를 시작해보세요.",
                         "name" to names,
+                        "check" to checkList,
                         "uid" to users,
                     )
                     // 데이터 추가
-                    newChat?.set(data)
-                    intent.putExtra("destinationUid", docKey)
-                    context?.startActivity(intent)
+                    newChat?.set(data)?.addOnSuccessListener {
+                        intent.putExtra("destinationUid", docKey)
+                        context?.startActivity(intent)
+                    }
                 } else {
                     Log.d("tag", "is Empty3 -------------")
                 }

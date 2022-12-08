@@ -1,24 +1,16 @@
 package com.example.aifriend
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
-import android.graphics.Color
-import android.net.Network
+import android.R
 import android.os.Build
 import android.os.Bundle
-import android.os.Message
 import android.util.Log
+import android.view.MenuItem
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.aifriend.Utils.Constants
-import com.example.aifriend.Utils.Constants.CHANNEL_ID
-import com.example.aifriend.Utils.Constants.CHANNEL_NAME
+import com.example.aifriend.BuildConfig.IP_ADDRESS
+import com.example.aifriend.BuildConfig.SERVER_PORT
 import com.example.aifriend.Utils.Constants.FCM_MESSAGE_URL
 import com.example.aifriend.data.ChatData
 import com.example.aifriend.data.ChatRoomData
@@ -31,10 +23,12 @@ import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import org.json.JSONObject
 import java.net.HttpURLConnection
+import java.net.Socket
 import java.net.URL
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.concurrent.thread
+
 
 /**
  * 채팅 화면 프래그먼트
@@ -48,10 +42,12 @@ class ChatRoomActivity : AppCompatActivity() {
     private var destinationUid : String? = null
     private var recyclerView: RecyclerView? = null
     private var name: String? = null
+    private var userName: String?  = null
     private var aiChatRecyclerView: RecyclerView? = null
     private lateinit var keyboardVisibility: KeyboardVisibility
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityChatRoomBinding.inflate(layoutInflater)
@@ -60,15 +56,29 @@ class ChatRoomActivity : AppCompatActivity() {
         val chatSendButton = binding.chatSendButton
 
         val time = System.currentTimeMillis()
-        val dateFormat = SimpleDateFormat("yyyy.MM.dd HH:mm:ss",Locale.KOREA)
-        val curTime = dateFormat.format(Date(time)).toString()
-        destinationUid = intent.getStringExtra("destinationUid")
-        uid = Firebase.auth.currentUser?.uid.toString()
-        recyclerView = binding.chatRoomActivityRecyclerView
-        getName()
+        var date = Date(time)
+        var data : ArrayList<String> = intent.getSerializableExtra("chatInfo") as ArrayList<String>
+        Log.d("tag", data.toString())
 
+        destinationUid = data?.get(0).toString()
+        userName = data?.get(1).toString()
         val collectionPath : String = destinationUid!!.split("/")?.get(0)
         val fieldPathUid: String = destinationUid!!.split("/")?.get(1)
+        uid = Firebase.auth.currentUser?.uid.toString()
+        getName()
+
+        //툴바
+        val toolbar = binding.chatToolbar as androidx.appcompat.widget.Toolbar
+        setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        if(collectionPath != "AIChat") {
+            supportActionBar?.title = userName
+        } else {
+            supportActionBar?.title = "AI"
+        }
+        recyclerView = binding.chatRoomActivityRecyclerView
+
+
 
         /**
          * 채팅 띄우기
@@ -76,18 +86,57 @@ class ChatRoomActivity : AppCompatActivity() {
         chatAdapter = ChatRoomAdapter(collectionPath,fieldPathUid)
         chatRoom()
 
+        var docRef = MyApplication.db.collection(collectionPath).document(fieldPathUid)
+
+        var checkList = arrayListOf<Int>()
+        checkList.add(1)
+        checkList.add(1)
+
+        docRef.get().addOnSuccessListener {
+            var item = it.toObject<ChatData>()
+            if(item?.uid?.get(0) == uid) {
+                checkList[0] = 1
+                checkList[1] = item?.check?.get(1)!!
+            } else {
+                // uid[1] == 내 uid
+                checkList[0] = item?.check?.get(0)!!
+                checkList[1] = 1
+            }
+            var checks = hashMapOf(
+                "check" to checkList
+            )
+            docRef.update(checks as Map<String, Any>).addOnSuccessListener {
+                Log.d("tag", "채팅 확인")
+            }.addOnFailureListener{
+                Log.d("tag", "채팅 확인 실패")
+            }
+        }
+
+
+//        var map_0 = mutableMapOf<String, Any>()
+//        map_0["check_0"] = 0
+//        var map_1 = mutableMapOf<String, Any>()
+//        map_0["check_1"] = 0
+//
+//        MyApplication.db.collection("ChatRoomList").document(fieldPathUid)
+//            .update(map_0).addOnSuccessListener {
+//                Toast.makeText(this, "채팅 확인", Toast.LENGTH_SHORT).show()
+//            }.addOnFailureListener{
+//                Toast.makeText(this, "실패", Toast.LENGTH_SHORT).show()
+//            }
+
 
         /**
          *  채팅 보내기
          **/
         chatSendButton.setOnClickListener {
-            val chat = ChatRoomData(name, chatEditText.text.toString(), curTime, uid)
-//            recyclerView?.scrollToPosition(chatAdapter.itemCount - 1)
+            val chat = ChatRoomData(name, chatEditText.text.toString(), date, uid)
+
             //수정 작업 필요
             var chatDataMap = mutableMapOf<String,Any>()
             chatDataMap["key"] = destinationUid.toString()
             chatDataMap["lastChat"] = chatEditText.text.toString()
-            chatDataMap["time"] = curTime
+            chatDataMap["time"] = date
             sendPostToFCM(destinationUid!!, uid!!, name, chatEditText.text.toString())
             //저장
             if(chatRoomUid == null) {
@@ -115,6 +164,52 @@ class ChatRoomActivity : AppCompatActivity() {
                 }
                 chatEditText.text = null
             }
+            // 채팅 보내면 상대에 1로 변경
+            docRef.get().addOnSuccessListener {
+                var item = it.toObject<ChatData>()
+                if (item?.uid?.get(0) == uid) {
+                    checkList[0] = item?.check?.get(0)!!    // 나
+                    checkList[1] = 0   // 상대방
+                } else {
+                    // uid[1] == 내 uid
+                    checkList[0] = 0   // 상대방
+                    checkList[1] = item?.check?.get(1)!!    // 나
+                }
+                var checks = hashMapOf(
+                    "check" to checkList
+                )
+                docRef.update(checks as Map<String, Any>).addOnSuccessListener {
+                    Log.d("tag", "채팅 확인")
+                }.addOnFailureListener{
+                    Log.d("tag", "채팅 확인 실패")
+                }
+            }
+//            var map_0 = mutableMapOf<String, Any>()
+//            map_0["check_0"] = 1
+//            var map_1 = mutableMapOf<String, Any>()
+//            map_0["check_1"] = 1
+//
+//            MyApplication.db.collection("ChatRoomList").document(fieldPathUid)
+//                .update(map_0).addOnSuccessListener {
+//                    Toast.makeText(this, "채팅 확인", Toast.LENGTH_SHORT).show()
+//                }.addOnFailureListener{
+//                    Toast.makeText(this, "실패", Toast.LENGTH_SHORT).show()
+//                }
+            if (collectionPath == "AIChat") {
+                // socket 통신
+                thread {
+                    val socket = Socket(IP_ADDRESS, SERVER_PORT)
+                    val outStream = socket.outputStream
+
+                    val data = "AIchat" + uid!!
+                    val charset = Charsets.UTF_8
+                    outStream.write(data.toByteArray(charset))
+
+                    socket.close()
+                }
+            }
+
+
 
         }
         chatRoom()
@@ -147,74 +242,148 @@ class ChatRoomActivity : AppCompatActivity() {
     }
 
     private fun sendPostToFCM(destinationUid: String, myUid: String, pTitle: String?, pMessage: String?) {
-        val collectionPath : String = destinationUid!!.split("/")?.get(0)
+        val collectionPath: String = destinationUid!!.split("/")?.get(0)
         val fieldPathUid: String = destinationUid!!.split("/")?.get(1)
         val docRef = fireStore.collection(collectionPath).document(fieldPathUid)
-        var userUid : String = ""
-        docRef.get().addOnSuccessListener {
-            Log.d("tag", it.data.toString())
-            var item = it.toObject<ChatData>()
-            if (item != null) {
-                userUid = if(item.uid?.get(0)?.equals(myUid) == true) {
-                    item.uid?.get(1).toString()
-                } else {
-                    item.uid?.get(0).toString()
-                }
-            }
-            if (userUid != null) {
-                var token : String = ""
-                fireStore.collection("user").whereEqualTo("uid", userUid).addSnapshotListener { value, error ->
-                    for (snapshot in value!!.documents) {
-                        var item = snapshot.toObject<UserData>()
-                        token = item?.token.toString()
+        var userUid: String = ""
+        if (collectionPath != "AIChat") {
+            docRef.get().addOnSuccessListener {
+                Log.d("tag", it.data.toString())
+                var item = it.toObject<ChatData>()
+                if (item != null) {
+                    userUid = if (item.uid?.get(0)?.equals(myUid) == true) {
+                        item.uid?.get(1).toString()
+                    } else {
+                        item.uid?.get(0).toString()
                     }
-
-                    Thread(
-                        Runnable {
-                            kotlin.run {
-                                try {
-                                    val root = JSONObject()
-                                    val notification = JSONObject()
-
-                                    notification.put("title", pTitle)
-                                    notification.put("body", pMessage)
-
-
-                                    root.put("data", notification) // 여기서 data와 notification 두가지 중 설정하면 된다.
-                                    root.put("to", token)
-
-                                    val url = URL(FCM_MESSAGE_URL)!!
-                                    val conn = url.openConnection() as HttpURLConnection
-                                    conn.requestMethod = "POST"
-                                    conn.doOutput = true
-                                    conn.doInput = true
-                                    conn.addRequestProperty("Authorization", "key=${BuildConfig.FCM_SERVER_KEY}") //받아 온 서버키를 넣어주세요
-                                    conn.setRequestProperty("Accept", "application/json")
-                                    conn.setRequestProperty("Content-type", "application/json")
-
-                                    val os = conn.outputStream
-                                    os.write(root.toString().toByteArray(Charsets.UTF_8));
-
-                                    os.flush();
-                                    conn.responseCode
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
-                                }
+                }
+                if (userUid != null) {
+                    var token: String = ""
+                    fireStore.collection("user")
+                        .whereEqualTo("uid", userUid)
+                        .addSnapshotListener { value, error ->
+                            for (snapshot in value!!.documents) {
+                                var item = snapshot.toObject<UserData>()
+                                token = item?.token.toString()
                             }
 
-                        }
-                    ).start()
+                            Thread(
+                                Runnable {
+                                    kotlin.run {
+                                        try {
+                                            val root = JSONObject()
+                                            val notification = JSONObject()
 
+                                            notification.put("title", pTitle)
+                                            notification.put("body", pMessage)
+
+
+                                            root.put(
+                                                "data",
+                                                notification
+                                            ) // 여기서 data와 notification 두가지 중 설정하면 된다.
+                                            root.put("to", token)
+
+                                            val url = URL(FCM_MESSAGE_URL)!!
+                                            val conn = url.openConnection() as HttpURLConnection
+                                            conn.requestMethod = "POST"
+                                            conn.doOutput = true
+                                            conn.doInput = true
+                                            conn.addRequestProperty(
+                                                "Authorization",
+                                                "key=${BuildConfig.FCM_SERVER_KEY}"
+                                            ) //받아 온 서버키를 넣어주세요
+                                            conn.setRequestProperty("Accept", "application/json")
+                                            conn.setRequestProperty(
+                                                "Content-type",
+                                                "application/json"
+                                            )
+
+                                            val os = conn.outputStream
+                                            os.write(root.toString().toByteArray(Charsets.UTF_8));
+
+                                            os.flush();
+                                            conn.responseCode
+                                        } catch (e: Exception) {
+                                            e.printStackTrace()
+                                        }
+                                    }
+
+                                }
+                            ).start()
+
+                        }
                 }
             }
 
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        val collectionPath : String = destinationUid!!.split("/")?.get(0)
+        val fieldPathUid: String = destinationUid!!.split("/")?.get(1)
+        var docRef = MyApplication.db.collection(collectionPath).document(fieldPathUid)
 
+        docRef.get().addOnSuccessListener {
+            var checkList = arrayListOf<Int>()
+            checkList.add(1)
+            checkList.add(1)
+            var item = it.toObject<ChatData>()
+            if(item?.uid?.get(0) == uid) {
+                checkList[0] = 1
+                checkList[1] = item?.check?.get(1)!!
+            } else {
+                // uid[1] == 내 uid
+                checkList[0] = item?.check?.get(0)!!
+                checkList[1] = 1
+            }
+            var checks = hashMapOf(
+                "check" to checkList
+            )
+            docRef.update(checks as Map<String, Any>).addOnSuccessListener {
+                Log.d("tag", "채팅 확인")
+            }.addOnFailureListener{
+                Log.d("tag", "채팅 확인 실패")
+            }
+        }
+    }
 
+    override fun onPause() {
+        super.onPause()
+        val collectionPath : String = destinationUid!!.split("/")?.get(0)
+        val fieldPathUid: String = destinationUid!!.split("/")?.get(1)
+        var docRef = MyApplication.db.collection(collectionPath).document(fieldPathUid)
 
-
+        docRef.get().addOnSuccessListener {
+            var checkList = arrayListOf<Int>()
+            checkList.add(1)
+            checkList.add(1)
+            var item = it.toObject<ChatData>()
+            if(item?.uid?.get(0) == uid) {
+                checkList[0] = 1
+                checkList[1] = item?.check?.get(1)!!
+            } else {
+                // uid[1] == 내 uid
+                checkList[0] = item?.check?.get(0)!!
+                checkList[1] = 1
+            }
+            var checks = hashMapOf(
+                "check" to checkList
+            )
+            docRef.update(checks as Map<String, Any>).addOnSuccessListener {
+                Log.d("tag", "채팅 확인")
+            }.addOnFailureListener{
+                Log.d("tag", "채팅 확인 실패")
+            }
+        }
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.home -> finish()
+        }
+        return super.onOptionsItemSelected(item)
+    }
 
 
 }

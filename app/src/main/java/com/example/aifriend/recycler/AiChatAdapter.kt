@@ -67,7 +67,9 @@ class AiChatAdapter : RecyclerView.Adapter<AiChatAdapter.ViewHolder>() {
     @SuppressLint("WrongConstant")
     @RequiresApi(31)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-
+        val chatInfo: ArrayList<String> = ArrayList()
+        chatList[position].key?.let { chatInfo.add(it) }
+        chatList[position].name?.get(1)?.let { chatInfo.add(it) }
         // AI
         holder.chatTitleTextView.text = chatList[position].name?.get(1)
         holder.chatMessageTextView.text = chatList[position].lastChat
@@ -75,7 +77,7 @@ class AiChatAdapter : RecyclerView.Adapter<AiChatAdapter.ViewHolder>() {
         //채팅창 선책 시 이동
         holder.itemView.setOnClickListener {
             val intent = Intent(holder.itemView.context, ChatRoomActivity::class.java)
-            intent.putExtra("destinationUid", chatList[position].key)
+            intent.putExtra("chatInfo", chatInfo)
             holder.itemView.context?.startActivity(intent)
         }
 
