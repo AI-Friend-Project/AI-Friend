@@ -26,6 +26,9 @@
         <entry key="app/src/main/res/layout/activity_board_view.xml" value="0.11979166666666667" />
         <entry key="app/src/main/res/layout/activity_board_writing.xml" value="0.11979166666666667" />
         <entry key="app/src/main/res/layout/activity_chat_room.xml" value="0.2808883666992188" />
+        <entry key="app/src/main/res/layout/activity_favdetail.xml" value="0.2859375" />
+        <entry key="app/src/main/res/layout/activity_friend_view.xml" value="0.2859375" />
+        <entry key="app/src/main/res/layout/activity_login.xml" value="0.128125" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.18385416666666668" />
         <entry key="app/src/main/res/layout/activity_view_detail.xml" value="0.14583333333333334" />
         <entry key="app/src/main/res/layout/fragment_chat.xml" value="0.18385416666666668" />
@@ -34,12 +37,12 @@
         <entry key="app/src/main/res/layout/fragment_tab3.xml" value="0.17395833333333333" />
         <entry key="app/src/main/res/layout/header.xml" value="0.18385416666666668" />
         <entry key="app/src/main/res/layout/item_board.xml" value="0.18385416666666668" />
-        <entry key="app/src/main/res/layout/item_chat.xml" value="0.18385416666666668" />
+        <entry key="app/src/main/res/layout/item_chat.xml" value="0.21664887940234792" />
         <entry key="app/src/main/res/layout/item_chat_watched.xml" value="0.2078804347826087" />
         <entry key="app/src/main/res/layout/notification.xml" value="0.2078804347826087" />
         <entry key="app/src/main/res/layout/receiver_msgbox.xml" value="0.62372058370839" />
         <entry key="app/src/main/res/layout/receiver_msgbox2.xml" value="1.0770858764648439" />
-        <entry key="app/src/main/res/layout/sender_msgbox.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/sender_msgbox.xml" value="1.295219421386719" />
         <entry key="app/src/main/res/layout/view_favdata.xml" value="0.14583333333333334" />
         <entry key="app/src/main/res/layout/view_navdata.xml" value="0.17395833333333333" />
         <entry key="app/src/main/res/layout/view_notidata.xml" value="0.17395833333333333" />

@@ -4,9 +4,12 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
+import com.example.aifriend.R
 import com.example.aifriend.data.ChatRoomData
 import com.example.aifriend.data.OtherUser
 import com.example.aifriend.data.ViewType
@@ -86,6 +89,8 @@ class ChatRoomAdapter(collectionPath: String,fieldPath: String): RecyclerView.Ad
         private var msgTextView = binding.msgTextView
         private var timeTextView = binding.timeTextView
         private var nameTextView = binding.nameTextView
+        private var robotHeadImgView = binding.robotHeadImgView
+
 
         @RequiresApi(Build.VERSION_CODES.O)
         fun bind(item: ChatRoomData) {
@@ -95,6 +100,7 @@ class ChatRoomAdapter(collectionPath: String,fieldPath: String): RecyclerView.Ad
                 nameTextView.text = item.name
             } else {
                 nameTextView.text = "AI"
+                robotHeadImgView.visibility = VISIBLE
             }
             item.name?.let { Log.d("tag", it) }
         }
