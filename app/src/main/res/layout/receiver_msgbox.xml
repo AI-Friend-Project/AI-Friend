@@ -2,7 +2,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:paddingLeft="15dp"
+    android:paddingBottom="5dp">
+    <ImageView
+        android:id="@+id/robotHeadImgView"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:visibility="invisible"
+        android:layout_marginLeft="5dp"
+        android:layout_toRightOf="@id/nameTextView"
+        android:layout_alignBottom="@id/nameTextView"
+        android:src="@drawable/robot_head"/>
 
     <TextView
         android:id="@+id/nameTextView"
@@ -11,13 +21,7 @@
         android:text="name"
         android:layout_margin="5dp"
         android:layout_alignParentLeft="true"/>
-<!--    <ImageView-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginLeft="-8dp"-->
-<!--        android:layout_alignTop="@id/msgTextView"-->
-<!--        android:layout_marginTop="1dp"-->
-<!--        android:src="@drawable/ic_baseline_arrow_left_24" />-->
+
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -21,6 +21,7 @@ android {
         buildConfigField "String", "FCM_SERVER_KEY", properties["fcm_server_key"]
         buildConfigField "String", "IP_ADDRESS", properties["ip_address"]
         buildConfigField "int", "SERVER_PORT", properties['server_port']
+        buildConfigField "String", "USER_DELIMITER", properties['user_delimiter']
 
     }
 
