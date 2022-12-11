@@ -70,6 +70,7 @@ class ChatAdapter: RecyclerView.Adapter<ChatAdapter.ViewHolder>() {
     @RequiresApi(31)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val chatInfo: ArrayList<String> = ArrayList()
+        // chatInfo : key, name[상대]
         chatList[position].key?.let { chatInfo.add(it) }
         // 계정에 따라 상대방 이름 다르게 보이기
         if(chatList[position].uid?.get(0) == uid) {

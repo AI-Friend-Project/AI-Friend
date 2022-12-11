@@ -1,6 +1,8 @@
 package com.example.aifriend
 
 import android.content.DialogInterface
+import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -12,8 +14,14 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
+import com.example.aifriend.data.ChatData
+import com.example.aifriend.data.UserData
 import com.example.aifriend.databinding.ActivityViewDetailBinding
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.toObject
+import com.google.firebase.ktx.Firebase
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -23,6 +31,13 @@ class ViewDetailActivity:AppCompatActivity() {
     private var favName:String? = null
     private var docId:String? = null
     private var writerEmail:String? = null
+    var chatList = ArrayList<ChatData>()
+    var myUid = Firebase.auth.currentUser?.uid.toString()     // uid 받아오기
+    var fireStore = FirebaseFirestore.getInstance()
+    private lateinit var userUid : String
+    var tmp = 0
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityViewDetailBinding.inflate(layoutInflater)
@@ -81,6 +96,7 @@ class ViewDetailActivity:AppCompatActivity() {
             .setTitle("채팅을 시작하시겠습니까?")
             .setPositiveButton("네",
                 DialogInterface.OnClickListener{ dialogInterface, i ->
+                    createChat()
                 })
             .setNegativeButton("아니오",
                 DialogInterface.OnClickListener { dialogInterface, i ->
@@ -167,5 +183,100 @@ class ViewDetailActivity:AppCompatActivity() {
             }
             else -> return super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun createChat() {
+        /**
+         * 채팅방 중복 생성 되는 오류 해결하기
+         * 시간 오류
+         */
+        var myEmail = MyApplication.email
+        var myName = myEmail?.split('@')?.get(0)
+        var userName : String
+        val users = arrayListOf<String>(myUid!!)  //  사용자 uid 받아옴 - 각 사용자마다 문서가 생성되므로
+        fireStore.collection("user")
+            .document(writerEmail!!)
+            .get()
+            .addOnSuccessListener {
+                var item = it.toObject<UserData>()
+                userUid = item?.uid.toString()
+                users.add(userUid)
+                userName = item?.name.toString()
+                val chatInfo: ArrayList<String> = ArrayList()
+                // 여러번 실행되는거 고치기
+                val intent = Intent(applicationContext, ChatRoomActivity::class.java)
+                checkChat {
+                    Log.d("tag", "Chat: " + chatList)
+                    if (chatList.isNotEmpty()) {
+                        if (tmp == 0) {
+                            Log.d("tag", "is Not Empty -------------"+chatList[0].key)
+                            chatList[0].key?.let { it1 -> chatInfo.add(it1) }
+                            chatInfo.add(userName)
+                            intent.putExtra("chatInfo", chatInfo)
+                            applicationContext?.startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK))
+                        } else {
+                            Log.d("tag", "is Not Empty2 -------------")
+                        }
+                    } else {
+                        if (tmp == 0) {
+                            Log.d("tag", "is Empty -------------")
+                            val newChat = fireStore?.collection("ChatRoomList")
+                                ?.document()   // ChatRoomList 컬렉션에 문서생성 (문서 id는 랜덤으로 생성)
+
+                            val docKey = "ChatRoomList/" + newChat?.id    // 문서 id 받아오기
+                            val names =
+                                arrayListOf<String>(myName!!) // name : AI 로 설정 - 채팅방 리스트에 AI 라고 뜨도록
+                            names.add(userName)
+                            val checkList = arrayListOf<Int>()
+                            checkList?.add(1)
+                            checkList?.add(1)
+                            // hashMap data 초기화
+                            val data = hashMapOf(
+                                "key" to docKey,
+                                "lastChat" to "대화를 시작해보세요.",
+                                "name" to names,
+                                "check" to checkList,
+                                "uid" to users,
+                            )
+                            // 데이터 추가
+                            newChat?.set(data)?.addOnSuccessListener {
+                                chatList[0].key?.let { it1 -> chatInfo.add(it1) }
+                                chatInfo.add(userName)
+                                intent.putExtra("chatInfo", chatInfo)
+                                applicationContext?.startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK))
+                            }
+                        } else {
+                            Log.d("tag", "is Empty3 -------------")
+                        }
+                    }
+                }
+            }
+    }
+
+
+    /**
+     * callback 함수를 이용한 내 채팅, 사용자 채팅 가져오기
+     */
+    private fun checkChat(callback: (ArrayList<ChatData>) -> Unit) {
+        fireStore?.collection("ChatRoomList")
+            ?.whereArrayContains("uid", myUid!!)
+            ?.addSnapshotListener { querySnapshot, firebaseFirestoreException ->
+                chatList.clear()
+                for (snapshot in querySnapshot!!.documents) {
+                    var item = snapshot.toObject<ChatData>()
+                    item?.key = "ChatRoomList/" + snapshot.id
+                    if(item?.uid?.get(0).equals(userUid)) {
+                        chatList.add(item!!)
+                        break
+                    } else if (item?.uid?.get(1).equals(userUid)) {
+                        chatList.add(item!!)
+                        break
+                    } else {
+                        continue
+                    }
+                }
+                callback(chatList)
+                tmp ++
+            }
     }
 }

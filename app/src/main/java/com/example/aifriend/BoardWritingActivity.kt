@@ -137,6 +137,7 @@ class BoardWritingActivity : AppCompatActivity(){
 
         if(requestCode===10 && resultCode=== Activity.RESULT_OK){
             binding.writingImage.visibility = View.VISIBLE
+            binding.imageContentLine.visibility = View.VISIBLE
             Glide
                 .with(getApplicationContext())
                 .load(data?.data)

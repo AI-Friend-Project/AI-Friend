@@ -6,7 +6,7 @@
         android:top="5dp"
         android:bottom="5dp">
     <shape xmlns:android="http://schemas.android.com/apk/res/android">
-        <solid android:color="#F5F5F5"/>
+        <solid android:color="@color/mainGray"/>
         <corners android:radius="20dp"/>
     </shape>
     </item>
