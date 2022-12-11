@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:layout_alignParentTop="true"
-        android:id="@+id/main_toolbar"/>
+        android:layout_marginBottom="15dp"
+        android:id="@+id/main_toolbar"
+        android:background="@drawable/toolbar_border"
+        app:titleTextColor="@color/white"
+        android:theme="@style/AppTheme.Actionbar"/>
     <ImageButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/main_toolbar"
         android:layout_marginLeft="10dp"
         android:id="@+id/add_friend_btn"
-        android:src="@drawable/ic_baseline_account_circle_24"
+        android:src="@drawable/ic_baseline_account_circle_blue_50"
         android:background="@android:color/transparent"
         android:visibility="visible"/>
     <TextView
@@ -39,15 +44,17 @@
         android:layout_width="match_parent"
         android:layout_height="2dp"
         android:layout_below="@+id/view_detail_name"
-        android:layout_marginTop="14dp"
-        android:background="#F5F5F5"/>
+        android:layout_marginTop="18dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@color/mainDarkBlue"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/view_detail_name"
         android:layout_marginLeft="15dp"
-        android:layout_marginTop="23dp"
+        android:layout_marginTop="30dp"
         android:layout_marginBottom="5dp"
         android:textSize="25dp"
         android:textColor="@color/black"

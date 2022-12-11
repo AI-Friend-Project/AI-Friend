@@ -5,12 +5,13 @@
     android:layout_margin="50dp"
     android:padding="9dp"
     android:paddingBottom="10dp"
-    android:background="@drawable/edge2"
+    android:background="@drawable/items_edge"
     android:orientation="vertical">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="2dp"
+        android:layout_marginTop="2dp"
         android:paddingRight="8dp"
         android:paddingLeft="8dp"
         android:textColor="@color/black"
@@ -19,10 +20,13 @@
         android:id="@+id/NameView"/>
     <Button
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_margin="6dp"
+        android:layout_marginTop="2dp"
         android:textSize="11dp"
+        android:textColor="@color/white"
         android:id="@+id/requestBtn"
         android:text="친구 요청하기"
-        android:visibility="visible"/>
+        android:visibility="visible"
+        android:background="@drawable/button2"/>
 </LinearLayout>
