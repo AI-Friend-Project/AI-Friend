@@ -39,16 +39,8 @@ class AiChatAdapter : RecyclerView.Adapter<AiChatAdapter.ViewHolder>() {
     private val destinationUsers: ArrayList<String> = arrayListOf()
     var count : Int = 0
     private lateinit var mContext :Context
-    lateinit var docKey : String
-    val chatRoom = ChatRoomActivity()
-    var unRead : Int = 0
 
     init {
-        var checkList = arrayListOf<Int>()
-        checkList.add(-1)
-        checkList.add(-1)
-
-        Log.i("as", uid!!)
         fireStore = FirebaseFirestore.getInstance()
 
         fireStore?.collection("AIChat")
@@ -63,54 +55,8 @@ class AiChatAdapter : RecyclerView.Adapter<AiChatAdapter.ViewHolder>() {
                     item?.key = "AIChat/" + snapshot.id
                     chatList.add(item!!)
                 }
-                docKey = chatList[0].key?.split("/")?.get(1)!!
 
-                notifyItemChanged(0).run {
-                    var lastChatTmp = chatList[0].lastChat?.split(USER_DELIMITER)
-                    if(lastChatTmp?.get(0) == "user") {
-                        Log.d("tag", "유저가 보냄")
-                        checkList[0] = 1
-                    } else {
-                        if(count == 0) {
-                            if(checkList[0] == 0) {
-                                count = 1
-                                Log.d("tag", "AI가 보냈지만 확인함 - 알고보니 확인 안 함")
-                            } else if (checkList[0] == 1) {
-                                // count = 0 , checkList[0] = 1
-                                Log.d("tag", "AI가 보냈지만 확인함 - 그렇지만 새로운 문자") // 확인 안 함
-                                checkList[0] = 0
-                                count = 1
-                            } else {
-                                // count = 0 , checkList[0] = -1
-                                count = 1
-                                Log.d("tag", "AI가 보냈지만 확인함 - 확인했지롱") // 확인
-                                checkList[0] = 1
-                            }
-                        } else {
-                            // count = 0
-
-                            Log.d("tag", "AI가 보냈는데 확인 안 함 - 근데 확인 안 함")
-                            Log.d("tag", count.toString() + "checkLsit : " + checkList[0].toString())
-                            count = 0
-                            checkList[0] = 0
-
-                        }
-                    }
-                }
-                val docData = hashMapOf(
-                    "checkList" to checkList
-                )
-                fireStore?.collection("AIChat")
-                    ?.document(docKey)
-                    ?.collection("checks")
-                    ?.document("doc1")
-                    ?.set(docData)
-                    ?.addOnSuccessListener {
-//                        Log.d("tag", "성공")
-                    }
-                    ?.addOnFailureListener{
-                        Log.d("tag", "실패")
-                    }
+                notifyItemChanged(0)
             }
 
         // DiffUtil 로 갱신 해보기
@@ -151,36 +97,16 @@ class AiChatAdapter : RecyclerView.Adapter<AiChatAdapter.ViewHolder>() {
             holder.chatMessageTextView.text = chatList[position].lastChat
         }
 //        chatList[position]?.check?.get(0) == 0 &&
-        var doc = MyApplication.db.collection("AIChat").document(docKey)
-        doc.collection("checks")
-            .document("doc1")
-            .get()
-            .addOnSuccessListener { it ->
-                var item = it.toObject<CheckData>()
-                if (item?.checkList?.get(0) == 0) {
-                    unRead = 0
-                    holder.receivedChatNotificationIcon.visibility = View.VISIBLE
-                    chatList[position].key?.let { chatRoom.aiNotification(it, uid) }
 
-                } else {
-                    unRead = 1
-                    holder.receivedChatNotificationIcon.visibility = View.INVISIBLE
-                }
-            }
-        if(count == 0 && unRead == 0) {
+
+        if(chatList[position].check?.get(0) == 0 ) {
             holder.receivedChatNotificationIcon.visibility = View.VISIBLE
-//            chatList[position].lastChat?.let { notification.sendNotification("AI", it) }
-            chatList[position].key?.let { chatRoom.aiNotification(it, uid) }
-        } else if (count == 1 && unRead == 0) {
-            holder.receivedChatNotificationIcon.visibility = View.VISIBLE
-            chatList[position].key?.let { chatRoom.aiNotification(it, uid) }
         } else {
             holder.receivedChatNotificationIcon.visibility = View.INVISIBLE
         }
 
         //채팅창 선책 시 이동
         holder.itemView.setOnClickListener {
-            count = 1
             val intent = Intent(holder.itemView.context, ChatRoomActivity::class.java)
             intent.putExtra("chatInfo", chatInfo)
             holder.itemView.context?.startActivity(intent)

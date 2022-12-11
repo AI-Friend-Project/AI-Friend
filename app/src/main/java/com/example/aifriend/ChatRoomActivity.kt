@@ -48,6 +48,7 @@ class ChatRoomActivity : AppCompatActivity() {
     private var userName: String?  = null
     private var aiChatRecyclerView: RecyclerView? = null
     private lateinit var keyboardVisibility: KeyboardVisibility
+    var checkList = arrayListOf<Int?>()
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -88,19 +89,24 @@ class ChatRoomActivity : AppCompatActivity() {
 
         var docRef = MyApplication.db.collection(collectionPath).document(fieldPathUid)
 
-        var checkList = arrayListOf<Int>()
-        checkList.add(1)
-        checkList.add(1)
+//        var checkList = arrayListOf<Int>()
+//        checkList.add(1)
+//        checkList.add(1)
 
         docRef.get().addOnSuccessListener {
             var item = it.toObject<ChatData>()
-            if(item?.uid?.get(0) == uid) {
+            checkList = item?.check!!
+            if(collectionPath == "AIChat") {
                 checkList[0] = 1
-                checkList[1] = item?.check?.get(1)!!
             } else {
-                // uid[1] == 내 uid
-                checkList[0] = item?.check?.get(0)!!
-                checkList[1] = 1
+                if (item?.uid?.get(0) == uid) {
+                    checkList[0] = 1
+                    checkList[1] = item?.check?.get(1)!!
+                } else {
+                    // uid[1] == 내 uid
+                    checkList[0] = item?.check?.get(0)!!
+                    checkList[1] = 1
+                }
             }
             var checks = hashMapOf(
                 "check" to checkList
@@ -330,9 +336,9 @@ class ChatRoomActivity : AppCompatActivity() {
         var docRef = MyApplication.db.collection(collectionPath).document(fieldPathUid)
 
         docRef.get().addOnSuccessListener {
-            var checkList = arrayListOf<Int>()
-            checkList.add(1)
-            checkList.add(1)
+//            var checkList = arrayListOf<Int>()
+//            checkList.add(1)
+//            checkList.add(1)
             var item = it.toObject<ChatData>()
             if(item?.uid?.get(0) == uid) {
                 checkList[0] = 1
@@ -364,17 +370,21 @@ class ChatRoomActivity : AppCompatActivity() {
         var docRef = MyApplication.db.collection(collectionPath).document(fieldPathUid)
 
         docRef.get().addOnSuccessListener {
-            var checkList = arrayListOf<Int>()
-            checkList.add(1)
-            checkList.add(1)
+//            var checkList = arrayListOf<Int>()
+//            checkList.add(1)
+//            checkList.add(1)
             var item = it.toObject<ChatData>()
-            if(item?.uid?.get(0) == uid) {
+            if(collectionPath == "AIChat") {
                 checkList[0] = 1
-                checkList[1] = item?.check?.get(1)!!
             } else {
-                // uid[1] == 내 uid
-                checkList[0] = item?.check?.get(0)!!
-                checkList[1] = 1
+                if (item?.uid?.get(0) == uid) {
+                    checkList[0] = 1
+                    checkList[1] = item?.check?.get(1)!!
+                } else {
+                    // uid[1] == 내 uid
+                    checkList[0] = item?.check?.get(0)!!
+                    checkList[1] = 1
+                }
             }
             var checks = hashMapOf(
                 "check" to checkList
@@ -384,10 +394,6 @@ class ChatRoomActivity : AppCompatActivity() {
             }.addOnFailureListener{
                 Log.d("tag", "채팅 확인 실패")
             }
-        }
-        if(collectionPath == "AIChat") {
-            val aiChat = AiChatAdapter()
-            aiChat.count = 0
         }
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
