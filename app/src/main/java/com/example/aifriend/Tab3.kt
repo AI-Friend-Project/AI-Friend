@@ -30,6 +30,7 @@ class Tab3 : Fragment() {
 
     private fun setUpView(){
         //여기서 탭3 내용 작성
+        binding.tab3EmailView.text = MyApplication.email.toString()
         //로그아웃
         binding.logoutBtn.setOnClickListener {
             MyApplication.auth.signOut()

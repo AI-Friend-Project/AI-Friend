@@ -1,50 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
-    android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".MainActivity">
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:id="@+id/main_toolbar"/>
-    <TextView
-        android:layout_width="match_parent"
+        android:id="@+id/main_toolbar"
+        android:background="@drawable/toolbar_border"
+        app:titleTextColor="@color/white"
+        android:theme="@style/AppTheme.Actionbar"
+        android:layout_alignParentTop="true"/>
+    <ImageView
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="아이디"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:textSize="15dp"/>
+        android:id="@+id/login_image"
+        android:src="@drawable/main_character"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="50dp"
+        android:layout_below="@+id/main_toolbar"
+        android:layout_centerHorizontal="true"/>
+    <ImageView
+        android:id="@+id/idImage"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_below="@id/login_image"
+        android:layout_marginLeft="30dp"
+        android:src="@drawable/ic_baseline_account_circle_blue_24"/>
     <EditText
         android:id="@+id/idEditView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp" />
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="비밀번호"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="5dp"
-        android:textSize="15dp"/>
+        android:background="@drawable/login_edge"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="10dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="15dp"
+        android:hint="E-mail"
+        android:layout_below="@+id/login_image"
+        android:layout_toRightOf="@+id/idImage"/>
+    <ImageView
+        android:id="@+id/pwImage"
+        android:layout_width="34dp"
+        android:layout_height="34dp"
+        android:src="@drawable/ic_baseline_lock_24"
+        android:layout_below="@id/idEditView"
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="33dp"
+        android:background="@drawable/pw_edge"/>
+
     <EditText
         android:id="@+id/pwEditView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textPassword"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"/>
+        android:background="@drawable/login_edge"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginBottom="10dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="15dp"
+        android:hint="password"
+        android:layout_toRightOf="@id/pwImage"
+        android:layout_below="@+id/idEditView"/>
     <Button
         android:id="@+id/loginBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="로그인 하기"
-        android:layout_marginLeft="100dp"
-        android:layout_marginRight="100dp"/>
+        android:layout_width="120dp"
+        android:layout_height="40dp"
+        android:background="@drawable/button"
+        android:text="로그인"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/white"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/pwEditView"/>
     <Button
         android:id="@+id/joinBtn"
         android:layout_width="match_parent"
@@ -53,6 +88,7 @@
         android:textColor="@color/black"
         android:background="#00ff0000"
         android:layout_marginLeft="100dp"
-        android:layout_marginRight="100dp"/>
+        android:layout_marginRight="100dp"
+        android:layout_below="@id/loginBtn"/>
 
-</LinearLayout>
+</RelativeLayout>

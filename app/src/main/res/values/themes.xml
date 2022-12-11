@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <!-- 액션바 제거 -->
-    <style name="Theme.Aifriend" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.Aifriend" parent="Theme.AppCompat.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">#4682B4</item>
         <item name="colorPrimaryVariant">#6495EB</item>
