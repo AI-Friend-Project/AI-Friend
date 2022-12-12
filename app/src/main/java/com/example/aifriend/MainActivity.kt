@@ -18,6 +18,7 @@ import com.example.aifriend.data.UserData
 import com.example.aifriend.databinding.ActivityMainBinding
 import com.example.aifriend.databinding.FragmentTab1Binding
 import com.example.aifriend.databinding.HeaderBinding
+import com.example.aifriend.loading.LoadingActivity
 import com.example.aifriend.recycler.NavAdapter
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout

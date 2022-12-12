@@ -72,14 +72,16 @@ class NavAdapter(val context: Context, val itemList: List<UserData>): RecyclerVi
         fireStore = FirebaseFirestore.getInstance()
         val users = arrayListOf<String>(myUid!!)  //  사용자 uid 받아옴 - 각 사용자마다 문서가 생성되므로
         users.add(userUid)
-
+        val chatInfo: ArrayList<String> = ArrayList()
         // 여러번 실행되는거 고치기
         val intent = Intent(context, ChatRoomActivity::class.java)
         checkChat { Log.d("tag", "Chat: " +chatList)
             if (chatList.isNotEmpty()) {
                 if(tmp == 0) {
                     Log.d("tag", "is Not Empty -------------")
-                    intent.putExtra("destinationUid", chatList[0].key)
+                    chatList[0].key?.let { it1 -> chatInfo.add(it1) }
+                    chatInfo.add(userName)
+                    intent.putExtra("chatInfo", chatInfo)
                     context?.startActivity(intent)
                 } else {
                     Log.d("tag", "is Not Empty2 -------------")
@@ -106,7 +108,9 @@ class NavAdapter(val context: Context, val itemList: List<UserData>): RecyclerVi
                     )
                     // 데이터 추가
                     newChat?.set(data)?.addOnSuccessListener {
-                        intent.putExtra("destinationUid", docKey)
+                        chatList[0].key?.let { it1 -> chatInfo.add(it1) }
+                        chatInfo.add(userName)
+                        intent.putExtra("chatInfo", chatInfo)
                         context?.startActivity(intent)
                     }
                 } else {
