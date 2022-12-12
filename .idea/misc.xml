@@ -3,6 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/jenny/Desktop/aifriend/app/src/main/res/layout/activity_view_detail.xml" value="0.17916666666666667" />
+        <entry key="..\:/Users/jenny/Desktop/aifriend/app/src/main/res/layout/notification.xml" value="0.17916666666666667" />
+        <entry key="..\:/Users/jenny/Desktop/aifriend/app/src/main/res/layout/view_navdata.xml" value="0.17916666666666667" />
+        <entry key="..\:/Users/jenny/Desktop/aifriend/app/src/main/res/layout/view_notidata.xml" value="0.17916666666666667" />
+        <entry key="..\:/Users/jenny/Desktop/aifriend/app/src/main/res/layout/view_userdata.xml" value="0.17916666666666667" />
+        <entry key="..\:/Users/jenny/Desktop/aifriend/app/src/main/res/layout/view_userdata2.xml" value="0.17916666666666667" />
         <entry key="app/src/main/res/drawable/bg_round_edittext.xml" value="0.1325" />
         <entry key="app/src/main/res/drawable/edge.xml" value="0.1235" />
         <entry key="app/src/main/res/drawable/edge2.xml" value="0.1235" />

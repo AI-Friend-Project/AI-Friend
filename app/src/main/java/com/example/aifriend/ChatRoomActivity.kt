@@ -3,6 +3,8 @@ package com.example.aifriend
 import android.R
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
@@ -49,6 +51,7 @@ class ChatRoomActivity : AppCompatActivity() {
     private var aiChatRecyclerView: RecyclerView? = null
     private lateinit var keyboardVisibility: KeyboardVisibility
     var checkList = arrayListOf<Int?>()
+    private var aiCheck :Int? = null
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -93,11 +96,13 @@ class ChatRoomActivity : AppCompatActivity() {
 //        checkList.add(1)
 //        checkList.add(1)
 
+        //채팅 확인 = 내 uid가 1로, 채팅 보내면 상대 uid가 0으로.
         docRef.get().addOnSuccessListener {
             var item = it.toObject<ChatData>()
             checkList = item?.check!!
             if(collectionPath == "AIChat") {
-                checkList[0] = 1
+                checkList[0] = 1 //나
+                aiCheck = item?.check?.get(1) //ai는 변화 없음
             } else {
                 if (item?.uid?.get(0) == uid) {
                     checkList[0] = 1
@@ -124,83 +129,102 @@ class ChatRoomActivity : AppCompatActivity() {
         chatSendButton.setOnClickListener {
             val time = System.currentTimeMillis()
             var date = Date(time)
-            if (chatEditText.text.toString() == "") {
-                Toast.makeText(this, "글씨를 써주세요", Toast.LENGTH_SHORT).show()
-            } else {
-                val chat = ChatRoomData(name, chatEditText.text.toString(), date, uid)
 
-                //수정 작업 필요
-                var chatDataMap = mutableMapOf<String, Any>()
-                chatDataMap["key"] = destinationUid.toString()
-                if(collectionPath == "AIChat") {
-                    chatDataMap["lastChat"] = "user" + USER_DELIMITER + chatEditText.text.toString() // 특수문자 : 739574/
+            docRef.get().addOnSuccessListener {
+                var item = it.toObject<ChatData>()
+                checkList = item?.check!!
+                aiCheck = checkList[1]
+
+                if (collectionPath == "AIChat" && aiCheck == 0) { //ai가 채팅을 아직 안 보낸 상태
+                    Toast.makeText(this, "AI친구의 답장을 기다려주세요.", Toast.LENGTH_SHORT).show()
+                } else if (chatEditText.text.toString() == "") {
+                    Toast.makeText(this, "채팅을 입력해주세요", Toast.LENGTH_SHORT).show()
                 } else {
-                    chatDataMap["lastChat"] = chatEditText.text.toString()
-                    sendPostToFCM(destinationUid!!, uid!!, name, chatEditText.text.toString())
-                }
-                chatDataMap["time"] = date
-                //저장
-                if (chatRoomUid == null) {
-                    fireStore.collection(collectionPath)
-                        .document(fieldPathUid)
-                        .update(chatDataMap)
-                        .addOnSuccessListener {
-                            if (fieldPathUid != null) {
-                                fireStore.collection(collectionPath)
-                                    .document(fieldPathUid)
-                                    .collection("Chats")
-                                    .add(chat)
-                            }
-                            chatEditText.text = null
-                        }
-                } else {
-                    if (fieldPathUid != null) {
+                    val chat = ChatRoomData(name, chatEditText.text.toString(), date, uid)
+
+                    //수정 작업 필요
+                    var chatDataMap = mutableMapOf<String, Any>()
+                    chatDataMap["key"] = destinationUid.toString()
+                    if (collectionPath == "AIChat") {
+                        chatDataMap["lastChat"] =
+                            "user" + USER_DELIMITER + chatEditText.text.toString() // 특수문자 : 739574/
+                    } else {
+                        chatDataMap["lastChat"] = chatEditText.text.toString()
+                        sendPostToFCM(destinationUid!!, uid!!, name, chatEditText.text.toString())
+                    }
+                    chatDataMap["time"] = date
+                    //저장
+                    if (chatRoomUid == null) {
                         fireStore.collection(collectionPath)
                             .document(fieldPathUid)
-                            .collection("Chats")
-                            .add(chat)
-                    }
-                    chatEditText.text = null
-                }
-                // 채팅 보내면 상대에 1로 변경
-                docRef.get().addOnSuccessListener {
-                    var item = it.toObject<ChatData>()
-                    if (item?.uid?.get(0) == uid) {
-                        checkList[0] = item?.check?.get(0)!!    // 나
-                        checkList[1] = 0   // 상대방
+                            .update(chatDataMap)
+                            .addOnSuccessListener {
+                                if (fieldPathUid != null) {
+                                    fireStore.collection(collectionPath)
+                                        .document(fieldPathUid)
+                                        .collection("Chats")
+                                        .add(chat)
+                                }
+                                chatEditText.text = null
+                            }
                     } else {
-                        // uid[1] == 내 uid
-                        checkList[0] = 0   // 상대방
-                        checkList[1] = item?.check?.get(1)!!    // 나
-                    }
-                    var checks = hashMapOf(
-                        "check" to checkList
-                    )
-                    docRef.update(checks as Map<String, Any>).addOnSuccessListener {
-                        Log.d("tag", "채팅 확인2")
-                    }.addOnFailureListener {
-                        Log.d("tag", "채팅 확인 실패")
-                    }
-                }
-
-                if (collectionPath == "AIChat") {
-                    // socket 통신
-                    try {
-                        thread {
-                            val socket = Socket(IP_ADDRESS, SERVER_PORT)
-                            val outStream = socket.outputStream
-
-                            val data = "AIchat" + uid!!
-                            val charset = Charsets.UTF_8
-                            outStream.write(data.toByteArray(charset))
-
-                            socket.close()
+                        if (fieldPathUid != null) {
+                            fireStore.collection(collectionPath)
+                                .document(fieldPathUid)
+                                .collection("Chats")
+                                .add(chat)
                         }
-                    } catch (e: IOException) {
+                        chatEditText.text = null
                     }
+                    // 채팅 보내면 상대에 0로 변경
+                    docRef.get().addOnSuccessListener {
+                        var item = it.toObject<ChatData>()
+                        if (collectionPath == "AIChat") {
+                            checkList[0] = item?.check?.get(0)
+                            checkList[1] = 0
+                            aiCheck = checkList[1]
+                        } else {
+                            if (item?.uid?.get(0) == uid) {
+                                checkList[0] = item?.check?.get(0)!!    // 나
+                                checkList[1] = 0   // 상대방
+                            } else {
+                                // uid[1] == 내 uid
+                                checkList[0] = 0   // 상대방
+                                checkList[1] = item?.check?.get(1)!!    // 나
+                            }
+                        }
+                        var checks = hashMapOf(
+                            "check" to checkList
+                        )
+                        docRef.update(checks as Map<String, Any>).addOnSuccessListener {
+                            Log.d("tag", "채팅 확인2")
+                        }.addOnFailureListener {
+                            Log.d("tag", "채팅 확인 실패")
+                        }
+                    }
+
+                    if (collectionPath == "AIChat") {
+                        // socket 통신
+                        try {
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                thread {
+                                    val socket = Socket(IP_ADDRESS, SERVER_PORT)
+                                    val outStream = socket.outputStream
+
+                                    val data = "AIchat" + uid!!
+                                    val charset = Charsets.UTF_8
+                                    outStream.write(data.toByteArray(charset))
+
+                                    socket.close()
+
+                                }
+                            }, 500) //0.5초
+                        } catch (e: IOException) {
+                        }
+                    }
+
+
                 }
-
-
             }
         }
 
@@ -340,7 +364,12 @@ class ChatRoomActivity : AppCompatActivity() {
 //            checkList.add(1)
 //            checkList.add(1)
             var item = it.toObject<ChatData>()
-            if(item?.uid?.get(0) == uid) {
+
+            if(collectionPath == "AIChat") {
+                checkList[0] = 1
+                aiCheck = item?.check?.get(1)
+                Log.d("tag", "onResume: ${aiCheck.toString()}")
+            } else if(item?.uid?.get(0) == uid) {
                 checkList[0] = 1
                 checkList[1] = item?.check?.get(1)!!
             } else {
@@ -376,6 +405,8 @@ class ChatRoomActivity : AppCompatActivity() {
             var item = it.toObject<ChatData>()
             if(collectionPath == "AIChat") {
                 checkList[0] = 1
+                checkList[1] = item?.check?.get(1)
+                Log.d("tag", "onPause: ${aiCheck.toString()}")
             } else {
                 if (item?.uid?.get(0) == uid) {
                     checkList[0] = 1
