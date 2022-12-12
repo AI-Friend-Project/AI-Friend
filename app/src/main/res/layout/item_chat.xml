@@ -30,6 +30,7 @@
             android:id="@+id/chatTitleTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimaryDark"
             android:text="Name"
             android:textSize="20dp"
             android:textStyle="bold"/>
@@ -52,6 +53,7 @@
             android:id="@+id/chatMessageTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/colorPrimary"
             android:text="message"
             android:singleLine="true"
             android:layout_marginTop="5dp"/>

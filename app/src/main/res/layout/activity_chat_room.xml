@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
     android:orientation="vertical">
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
@@ -45,6 +46,8 @@
                 android:layout_weight="1"
                 android:hint="Type the message"
                 android:inputType="textMultiLine"
+                android:textColor="@color/colorPrimaryDark"
+                android:textColorHint="@color/colorPrimary"
                 android:privateImeOptions="defaultInputted=korean"
                 android:padding="10dp"
                 android:paddingStart="20dp"
