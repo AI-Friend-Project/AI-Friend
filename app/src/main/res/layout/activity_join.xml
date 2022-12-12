@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".MainActivity"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
@@ -53,6 +54,8 @@
         android:paddingLeft="20dp"
         android:paddingRight="15dp"
         android:hint="E-mail"
+        android:textColor="@color/black"
+        android:textColorHint="@color/colorPrimary"
         android:layout_below="@+id/join_image"
         android:layout_toRightOf="@+id/idImage"/>
     <EditText
@@ -69,6 +72,8 @@
         android:paddingLeft="20dp"
         android:paddingRight="15dp"
         android:hint="password"
+        android:textColorHint="@color/colorPrimary"
+        android:textColor="@color/black"
         android:layout_toRightOf="@id/pwImage"
         android:layout_below="@+id/idEditView"/>
     <Button
@@ -87,6 +92,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:text="메일이 확인 되지 않는 경우 스팸메일함을 확인해주세요"
+        android:textColor="@color/black"
         android:layout_marginTop="30dp"
         android:layout_below="@id/joinBtn"/>
 

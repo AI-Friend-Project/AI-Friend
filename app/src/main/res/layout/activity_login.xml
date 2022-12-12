@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/white"
     tools:context=".MainActivity">
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
@@ -42,6 +43,8 @@
         android:paddingLeft="20dp"
         android:paddingRight="15dp"
         android:hint="E-mail"
+        android:textColorHint="@color/colorPrimary"
+        android:textColor="@color/black"
         android:layout_below="@+id/login_image"
         android:layout_toRightOf="@+id/idImage"/>
     <ImageView
@@ -68,6 +71,8 @@
         android:paddingLeft="20dp"
         android:paddingRight="15dp"
         android:hint="password"
+        android:textColor="@color/black"
+        android:textColorHint="@color/colorPrimary"
         android:layout_toRightOf="@id/pwImage"
         android:layout_below="@+id/idEditView"/>
     <Button

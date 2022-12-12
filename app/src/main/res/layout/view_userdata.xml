@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="50dp"
     android:padding="9dp"
     android:paddingBottom="10dp"
-    android:background="@drawable/items_edge"
-    android:orientation="vertical">
+    android:background="@drawable/items_edge">
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,8 +15,9 @@
         android:paddingLeft="8dp"
         android:textColor="@color/black"
         android:textSize="20dp"
-        android:layout_gravity="center"
-        android:id="@+id/NameView"/>
+        android:id="@+id/NameView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="40dp"
@@ -27,6 +27,8 @@
         android:textColor="@color/white"
         android:id="@+id/requestBtn"
         android:text="친구 요청하기"
+        android:layout_below="@+id/NameView"
+        android:layout_centerHorizontal="true"
         android:visibility="visible"
         android:background="@drawable/button2"/>
-</LinearLayout>
+</RelativeLayout>

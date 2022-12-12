@@ -11,6 +11,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
+        android:textColor="@color/colorPrimary"
         android:id="@+id/noti_time"/>
     <TextView
         android:layout_width="wrap_content"
@@ -30,7 +31,8 @@
         android:layout_marginBottom="7dp"
         android:text="수락하기"
         android:visibility="gone"
-        android:id="@+id/acceptBtn"/>
+        android:id="@+id/acceptBtn"
+        android:background="@drawable/button2"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
