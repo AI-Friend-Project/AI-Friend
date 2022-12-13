@@ -141,41 +141,6 @@ class ChatRoomActivity : AppCompatActivity() {
                     Toast.makeText(this, "채팅을 입력해주세요", Toast.LENGTH_SHORT).show()
                 } else {
                     val chat = ChatRoomData(name, chatEditText.text.toString(), date, uid)
-
-                    //수정 작업 필요
-                    var chatDataMap = mutableMapOf<String, Any>()
-                    chatDataMap["key"] = destinationUid.toString()
-                    if (collectionPath == "AIChat") {
-                        chatDataMap["lastChat"] =
-                            "user" + USER_DELIMITER + chatEditText.text.toString() // 특수문자 : 739574/
-                    } else {
-                        chatDataMap["lastChat"] = chatEditText.text.toString()
-                        sendPostToFCM(destinationUid!!, uid!!, name, chatEditText.text.toString())
-                    }
-                    chatDataMap["time"] = date
-                    //저장
-                    if (chatRoomUid == null) {
-                        fireStore.collection(collectionPath)
-                            .document(fieldPathUid)
-                            .update(chatDataMap)
-                            .addOnSuccessListener {
-                                if (fieldPathUid != null) {
-                                    fireStore.collection(collectionPath)
-                                        .document(fieldPathUid)
-                                        .collection("Chats")
-                                        .add(chat)
-                                }
-                                chatEditText.text = null
-                            }
-                    } else {
-                        if (fieldPathUid != null) {
-                            fireStore.collection(collectionPath)
-                                .document(fieldPathUid)
-                                .collection("Chats")
-                                .add(chat)
-                        }
-                        chatEditText.text = null
-                    }
                     // 채팅 보내면 상대에 0로 변경
                     docRef.get().addOnSuccessListener {
                         var item = it.toObject<ChatData>()
@@ -202,26 +167,82 @@ class ChatRoomActivity : AppCompatActivity() {
                             Log.d("tag", "채팅 확인 실패")
                         }
                     }
-
+                    //수정 작업 필요
+                    var chatDataMap = mutableMapOf<String, Any>()
+                    chatDataMap["key"] = destinationUid.toString()
                     if (collectionPath == "AIChat") {
-                        // socket 통신
-                        try {
-                            Handler(Looper.getMainLooper()).postDelayed({
-                                thread {
-                                    val socket = Socket(IP_ADDRESS, SERVER_PORT)
-                                    val outStream = socket.outputStream
-
-                                    val data = "AIchat" + uid!!
-                                    val charset = Charsets.UTF_8
-                                    outStream.write(data.toByteArray(charset))
-
-                                    socket.close()
-
-                                }
-                            }, 500) //0.5초
-                        } catch (e: IOException) {
-                        }
+                        chatDataMap["lastChat"] =
+                            "user" + USER_DELIMITER + chatEditText.text.toString() // 특수문자 : 739574/
+                    } else {
+                        chatDataMap["lastChat"] = chatEditText.text.toString()
+                        sendPostToFCM(destinationUid!!, uid!!, name, chatEditText.text.toString())
                     }
+                    chatDataMap["time"] = date
+                    //저장
+                    if (chatRoomUid == null) {
+                        fireStore.collection(collectionPath)
+                            .document(fieldPathUid)
+                            .update(chatDataMap)
+                            .addOnSuccessListener {
+                                if (fieldPathUid != null) {
+                                    fireStore.collection(collectionPath)
+                                        .document(fieldPathUid)
+                                        .collection("Chats")
+                                        .add(chat).addOnSuccessListener {
+                                            if (collectionPath == "AIChat") {
+                                                // socket 통신
+                                                try {
+                                                    Handler(Looper.getMainLooper()).postDelayed({
+                                                        thread {
+                                                            val socket = Socket(IP_ADDRESS, SERVER_PORT)
+                                                            val outStream = socket.outputStream
+
+                                                            val data = "AIchat" + uid!!
+                                                            val charset = Charsets.UTF_8
+                                                            outStream.write(data.toByteArray(charset))
+
+                                                            socket.close()
+
+                                                        }
+                                                    }, 500) //0.5초
+                                                } catch (e: IOException) {
+                                                }
+                                            }
+                                        }
+                                }
+                                chatEditText.text = null
+                            }
+                    } else {
+                        if (fieldPathUid != null) {
+                            fireStore.collection(collectionPath)
+                                .document(fieldPathUid)
+                                .collection("Chats")
+                                .add(chat).addOnSuccessListener {
+                                    sendPostToFCM(destinationUid!!, uid!!, name, chatEditText.text.toString())
+                                }
+                        }
+                        chatEditText.text = null
+                    }
+
+//                    if (collectionPath == "AIChat") {
+//                        // socket 통신
+//                        try {
+//                            Handler(Looper.getMainLooper()).postDelayed({
+//                                thread {
+//                                    val socket = Socket(IP_ADDRESS, SERVER_PORT)
+//                                    val outStream = socket.outputStream
+//
+//                                    val data = "AIchat" + uid!!
+//                                    val charset = Charsets.UTF_8
+//                                    outStream.write(data.toByteArray(charset))
+//
+//                                    socket.close()
+//
+//                                }
+//                            }, 500) //0.5초
+//                        } catch (e: IOException) {
+//                        }
+//                    }
 
 
                 }
@@ -265,12 +286,6 @@ class ChatRoomActivity : AppCompatActivity() {
                             item.uid?.get(0).toString()
                         }
                     }
-                } else {
-                    // AI
-                    if (item != null) {
-                        userUid = item.uid?.get(0).toString()
-                    }
-                }
                 if (userUid != null) {
                     var token: String = ""
                     fireStore.collection("user")
@@ -296,6 +311,10 @@ class ChatRoomActivity : AppCompatActivity() {
                                                 notification
                                             ) // 여기서 data와 notification 두가지 중 설정하면 된다.
                                             root.put("to", token)
+                                            Log.d("tag", pMessage + "dsssdds0-----------------------")
+                                            Log.d("tag", pTitle + "dsssdds0-----------------------")
+                                            Log.d("tag", token + "dsssdds0-----------------------")
+
 
                                             val url = URL(FCM_MESSAGE_URL)!!
                                             val conn = url.openConnection() as HttpURLConnection
@@ -304,7 +323,7 @@ class ChatRoomActivity : AppCompatActivity() {
                                             conn.doInput = true
                                             conn.addRequestProperty(
                                                 "Authorization",
-                                                "key=${BuildConfig.FCM_SERVER_KEY}"
+                                                "key=${FCM_SERVER_KEY}"
                                             ) //받아 온 서버키를 넣어주세요
                                             conn.setRequestProperty("Accept", "application/json")
                                             conn.setRequestProperty(
@@ -313,12 +332,14 @@ class ChatRoomActivity : AppCompatActivity() {
                                             )
 
                                             val os = conn.outputStream
-                                            os.write(root.toString().toByteArray(Charsets.UTF_8));
+                                            os.write(root.toString().toByteArray(Charsets.UTF_8))
 
-                                            os.flush();
+                                            os.flush()
                                             conn.responseCode
                                         } catch (e: Exception) {
                                             e.printStackTrace()
+                                            Log.d("tag", "$e--------------------------")
+
                                         }
                                     }
 
@@ -327,30 +348,9 @@ class ChatRoomActivity : AppCompatActivity() {
 
                         }
                 }
-            }
-
-    }
-    fun aiNotification(destinationUid: String, uid: String) {
-        val collectionPath: String = destinationUid!!.split("/")?.get(0)
-        val fieldPathUid: String = destinationUid!!.split("/")?.get(1)
-        var doc = MyApplication.db.collection(collectionPath).document(fieldPathUid)
-        var aiMessage = ""
-        doc.collection("checks")
-            .document("doc1")
-            .get()
-            .addOnSuccessListener { it ->
-                var item = it.toObject<CheckData>()
-                if(item?.checkList?.get(0) == 0) {
-                    doc.get().addOnSuccessListener { it2 ->
-                        var item2 = it2.toObject<ChatData>()
-                        aiMessage = item2?.lastChat.toString()
-                        sendPostToFCM(destinationUid, uid, "AI", aiMessage )
-                        Log.d("tag", "AI 알람 옴----------")
-                    }
-                } else {
-                    Log.d("tag", "실패----------")
                 }
             }
+
     }
 
     override fun onResume() {

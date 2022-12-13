@@ -127,7 +127,7 @@ class JoinActivity: AppCompatActivity() {
         val users = arrayListOf<String>(uid!!)  //  사용자 uid 받아옴 - 각 사용자마다 문서가 생성되므로
         val checkList = arrayListOf<Int>()
         checkList?.add(0)
-        checkList?.add(0)
+        checkList?.add(1)
         // hashMap data 초기화
         val data = hashMapOf(
             "key" to docKey,

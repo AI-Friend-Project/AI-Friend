@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/white">
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -19,6 +20,8 @@
         android:layout_marginLeft="15dp"
         android:id="@+id/writing_title"
         android:hint="제목을 입력하세요"
+        android:textColor="@color/black"
+        android:textColorHint="@color/colorPrimary"
         android:background="@null"/>
     <View
         android:layout_width="match_parent"
@@ -60,5 +63,7 @@
         android:layout_marginLeft="15dp"
         android:id="@+id/writing_content"
         android:hint="내용을 입력하세요"
+        android:textColorHint="@color/colorPrimary"
+        android:textColor="@color/black"
         android:background="@null"/>
 </LinearLayout>

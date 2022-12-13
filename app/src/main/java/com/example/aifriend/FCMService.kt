@@ -82,7 +82,7 @@ class FCMService : FirebaseMessagingService() {
         Log.d("tag", "SENDSENDSEND--------- ")
     }
 
-    fun sendNotification(title: String, message: String) {
+    private fun sendNotification(title: String, message: String) {
 
 
         val intent = Intent(this, MainActivity::class.java)
