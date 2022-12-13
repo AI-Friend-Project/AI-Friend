@@ -323,7 +323,7 @@ class ChatRoomActivity : AppCompatActivity() {
                                             conn.doInput = true
                                             conn.addRequestProperty(
                                                 "Authorization",
-                                                "key=${BuildConfig.FCM_SERVER_KEY}"
+                                                "key=${FCM_SERVER_KEY}"
                                             ) //받아 온 서버키를 넣어주세요
                                             conn.setRequestProperty("Accept", "application/json")
                                             conn.setRequestProperty(
@@ -332,12 +332,14 @@ class ChatRoomActivity : AppCompatActivity() {
                                             )
 
                                             val os = conn.outputStream
-                                            os.write(root.toString().toByteArray(Charsets.UTF_8));
+                                            os.write(root.toString().toByteArray(Charsets.UTF_8))
 
-                                            os.flush();
+                                            os.flush()
                                             conn.responseCode
                                         } catch (e: Exception) {
                                             e.printStackTrace()
+                                            Log.d("tag", "$e--------------------------")
+
                                         }
                                     }
 
