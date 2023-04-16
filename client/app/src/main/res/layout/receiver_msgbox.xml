@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="15dp"
+    android:paddingBottom="5dp">
+    <ImageView
+        android:id="@+id/robotHeadImgView"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:visibility="invisible"
+        android:layout_marginLeft="5dp"
+        android:layout_toRightOf="@id/nameTextView"
+        android:layout_alignBottom="@id/nameTextView"
+        android:src="@drawable/robot_head"/>
+
+    <TextView
+        android:textColor="@color/colorPrimaryDark"
+        android:id="@+id/nameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="name"
+        android:layout_margin="5dp"
+        android:layout_alignParentLeft="true"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="-7dp"
+        android:layout_alignTop="@id/msgTextView"
+        android:rotation="210"
+        android:layout_marginTop="1dp"
+        android:src="@drawable/ic_baseline_play_arrow_24" />
+
+    <TextView
+        android:id="@+id/msgTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello."
+        android:textColor="@color/white"
+        android:layout_below="@+id/nameTextView"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        android:padding="12dp"
+        android:maxWidth="250dp"
+        android:background="@drawable/receiver_msgbox_border"/>
+
+    <TextView
+        android:id="@+id/timeTextView"
+        android:textColor="@color/colorPrimary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="03:27"
+        android:layout_toRightOf="@id/msgTextView"
+        android:layout_marginLeft="8dp"
+        android:layout_alignBottom="@id/msgTextView"/>
+
+
+
+</RelativeLayout>

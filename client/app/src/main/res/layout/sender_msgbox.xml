@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="15dp">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/msgTextView"
+        android:layout_alignParentEnd="true"
+        android:rotation="100"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="-5dp"
+        android:src="@drawable/ic_baseline_play_arrow_24_gray" />
+
+    <TextView
+        android:id="@+id/msgTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Hello"
+        android:textColor="@color/colorPrimaryDark"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="7dp"
+        android:padding="12dp"
+        android:maxWidth="250dp"
+        android:background="@drawable/sender_msgbox_border"/>
+
+    <TextView
+        android:id="@+id/timeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="03:27"
+        android:textColor="@color/colorPrimary"
+        android:layout_toLeftOf="@+id/msgTextView"
+        android:layout_marginRight="8dp"
+        android:layout_alignBottom="@id/msgTextView"/>
+
+
+</RelativeLayout>
