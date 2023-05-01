@@ -1,5 +1,5 @@
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = "1"
+#os.environ['CUDA_VISIBLE_DEVICES'] = "1"
 import numpy as np
 from tqdm import tqdm
 
@@ -36,7 +36,7 @@ if __name__ == '__main__':
         with tqdm(total=len(train_loader), desc=f"Train({epoch})") as pbar:
             for i, data in enumerate(train_loader):
                 optimizer.zero_grad()
-                data = torch.stack(data)  # list of Tensor로 구성되어 있기 때문에 list를 stack을 통해 변환해준다.
+                data = torch.stack(data)  # list of Tensor, list -> stack.
                 data = data.transpose(1, 0)
 
                 data = data.to(device)
