@@ -14,9 +14,9 @@ if __name__ == '__main__':
     save_ckpt_path = f"{checkpoint_path}/kogpt2-Aihub-auto-regressive.pth"
 
     n_epoch = 5         # Num of Epoch
-    batch_size = 12      # 배치 사이즈
+    batch_size = 12      # batch size
     device = torch.device('cuda')
-    save_step = 25000 # 학습 저장 주기
+    save_step = 25000 # saving step
     learning_rate = 5e-5/3 # Learning Rate
 
     dataset= AIhubAutoRegressiveDataset(data_path)
