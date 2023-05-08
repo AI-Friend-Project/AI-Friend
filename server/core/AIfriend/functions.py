@@ -6,7 +6,6 @@ import time
 import os
 import sys
 import warnings
-from Keybert.main import KeyBert
 from konlpy.tag import Okt
 from Keybert.main import mmr
 from sklearn.metrics.pairwise import cosine_similarity
@@ -41,7 +40,6 @@ def sendMessage(title, body, token, push_service):
 
     # Send push notification to user using token value
     result = push_service.single_device_data_message(registration_id=token, data_message=data_message)
-
     # Print Result Output
     # print(result)
 
@@ -53,15 +51,9 @@ def KoGPT(user_id, database, model, tokenizer, push_service, model_ST, model_W2V
     user_base_delay = user_base_delay
 
     # Delay method
-    randint = random.randint(1,10)
-    if randint <= 6:
-        user_base_delay += random.randint(5,15)
-    elif (randint > 6) & (randint <=9) :
-        user_base_delay += random.randint(25,55)
-    elif randint > 9:
-        user_base_delay += random.randint(115,175)
+    user_base_delay = chatting_delay(user_base_delay)
 
-    #user_base_delay = 1
+    #user_base_delay = 1 <- delay is 1 second
     time.sleep(user_base_delay)
 
     # Document search
@@ -99,14 +91,15 @@ def KoGPT(user_id, database, model, tokenizer, push_service, model_ST, model_W2V
     answer = answer.replace(' 키키', '')
     answer = answer.replace('키키 ', '')
     answer = answer.replace('키키', '')
-
+    
+    # Save the AIFriend answer to user own firestore db
     AIchat_ref.add({'message': answer, 'time': firestore.SERVER_TIMESTAMP, 'uid': 'AIfriend'})
 
     # Sending message 
     sendMessage("AI", answer, getToken(uid, db), push_service)
     db.collection(u'AIChat').document(document_name).update({'check': [0, 1]})
 
-    # Using Keybert
+    # For using Keybert, checking user variable in firestore
     try:
         keybert_check = db.collection(u'AIChat').document(document_name).get().to_dict()['userLeng']
     except:
@@ -115,6 +108,31 @@ def KoGPT(user_id, database, model, tokenizer, push_service, model_ST, model_W2V
 
     # In each 'fav_max_count', server starts extracting interests
     fav_max_count = 50
+    
+    # Category connecting each 'fav_max_count' user chatting
+    category_connect(fav_max_count,keybert_check, uid, db, model_ST, model_W2V, category)
+
+    # Change the last chatting in user own firestore db
+    if keybert_check == -1:
+        keybert_check += 1
+    db.collection(u'AIChat').document(document_name).update({'lastChat': answer, 'check':[0,1], 'userLeng':keybert_check+1})
+
+def chatting_delay(base_delay):
+    user_base_delay = base_delay
+    randint = random.randint(1,10)
+    
+    if randint <= 6:
+        user_base_delay += random.randint(5,15)
+    elif (randint > 6) & (randint <=9) :
+        user_base_delay += random.randint(25,55)
+    elif randint > 9:
+        user_base_delay += random.randint(115,175)
+    
+    return user_base_delay
+    
+def category_connect(fav_max_count, keybert_check, uid, db, model_ST, model_W2V, category):
+    # In each 'fav_max_count', server starts extracting interests
+    fav_max_count = fav_max_count
     if keybert_check != -1:
         keybert_check = keybert_check % fav_max_count
     if keybert_check == 0:
@@ -123,18 +141,15 @@ def KoGPT(user_id, database, model, tokenizer, push_service, model_ST, model_W2V
             email = db.collection(u'user').where('uid', '==', uid).get()[0].id
             check = db.collection("fav").document(bert_keyword).get().to_dict()['users']
             if email in check:
-                print('already in fav ' + bert_keyword)
+                # server log for checking error
+                # print('already in fav ' + bert_keyword)
             else:
                 db.collection("fav").document(bert_keyword).update({"users": firestore.ArrayUnion([email])})
                 AIchat_ref.add({'message': bert_keyword + '에 관심있구나! 내가 비슷한 취향을 가진 친구들을 소개시켜줄게! 내 관심사 탭에 가볼래?', 'time': firestore.SERVER_TIMESTAMP, 'uid': 'AIfriend'})
             keybert_check = 0
         else:
-            print('keyword is not matched : ', bert_keyword)
-
-    if keybert_check == -1:
-        keybert_check += 1
-    db.collection(u'AIChat').document(document_name).update({'lastChat': answer, 'check':[0,1], 'userLeng':keybert_check+1})
-
+            # server log for checking error
+            # print('keyword is not matched : ', bert_keyword)
 
 def key_bert(user_id, database, model_ST, model_W2V, category):
     uid = user_id
