@@ -43,7 +43,7 @@ def sendMessage(title, body, token, push_service):
     # Print Result Output
     # print(result)
 
-def KoGPT(user_id, database, model, tokenizer, push_service, model_ST, model_W2V, category, user_base_delay = 5):
+def KoGPT(user_id, database, model, tokenizer, push_service, model_ST, model_W2V, category, user_base_delay = 5, fav_max_count = 50):
     uid = user_id
     db = database
     model = model
@@ -107,10 +107,11 @@ def KoGPT(user_id, database, model, tokenizer, push_service, model_ST, model_W2V
         keybert_check = -1
 
     # In each 'fav_max_count', server starts extracting interests
-    fav_max_count = 50
-    
-    # Category connecting each 'fav_max_count' user chatting
-    category_connect(fav_max_count,keybert_check, uid, db, model_ST, model_W2V, category)
+    if keybert_check != -1:
+        keybert_check = keybert_check % fav_max_count
+    if keybert_check == 0:
+        # Category connecting each 'fav_max_count' user chatting
+        category_connect(uid, db, model_ST, model_W2V, category)
 
     # Change the last chatting in user own firestore db
     if keybert_check == -1:
@@ -130,26 +131,21 @@ def chatting_delay(base_delay):
     
     return user_base_delay
     
-def category_connect(fav_max_count, keybert_check, uid, db, model_ST, model_W2V, category):
-    # In each 'fav_max_count', server starts extracting interests
-    fav_max_count = fav_max_count
-    if keybert_check != -1:
-        keybert_check = keybert_check % fav_max_count
-    if keybert_check == 0:
-        bert_keyword = key_bert(uid, db, model_ST, model_W2V, category)
-        if bert_keyword in category:
-            email = db.collection(u'user').where('uid', '==', uid).get()[0].id
-            check = db.collection("fav").document(bert_keyword).get().to_dict()['users']
-            if email in check:
-                # server log for checking error
-                # print('already in fav ' + bert_keyword)
-            else:
-                db.collection("fav").document(bert_keyword).update({"users": firestore.ArrayUnion([email])})
-                AIchat_ref.add({'message': bert_keyword + '에 관심있구나! 내가 비슷한 취향을 가진 친구들을 소개시켜줄게! 내 관심사 탭에 가볼래?', 'time': firestore.SERVER_TIMESTAMP, 'uid': 'AIfriend'})
-            keybert_check = 0
-        else:
+def category_connect(uid, db, model_ST, model_W2V, category):
+    bert_keyword = key_bert(uid, db, model_ST, model_W2V, category)
+    if bert_keyword in category:
+        email = db.collection(u'user').where('uid', '==', uid).get()[0].id
+        check = db.collection("fav").document(bert_keyword).get().to_dict()['users']
+        if email in check:
             # server log for checking error
-            # print('keyword is not matched : ', bert_keyword)
+            # print('already in fav ' + bert_keyword)
+        else:
+            db.collection("fav").document(bert_keyword).update({"users": firestore.ArrayUnion([email])})
+            AIchat_ref.add({'message': bert_keyword + '에 관심있구나! 내가 비슷한 취향을 가진 친구들을 소개시켜줄게! 내 관심사 탭에 가볼래?', 'time': firestore.SERVER_TIMESTAMP, 'uid': 'AIfriend'})
+        keybert_check = 0
+    else:
+        # server log for checking error
+        # print('keyword is not matched : ', bert_keyword)
 
 def key_bert(user_id, database, model_ST, model_W2V, category):
     uid = user_id
