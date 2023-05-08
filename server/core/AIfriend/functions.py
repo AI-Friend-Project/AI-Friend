@@ -163,7 +163,7 @@ def key_bert(user_id, database, model_ST, model_W2V, category):
             doc += i.to_dict()['message'] + ' '
         else:
             continue
-    print(doc)
+    # print(doc)
 
     # Morphological analysis (1)
     okt = Okt()
