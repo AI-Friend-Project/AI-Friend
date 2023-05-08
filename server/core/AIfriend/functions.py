@@ -142,7 +142,6 @@ def category_connect(uid, db, model_ST, model_W2V, category):
         else:
             db.collection("fav").document(bert_keyword).update({"users": firestore.ArrayUnion([email])})
             AIchat_ref.add({'message': bert_keyword + '에 관심있구나! 내가 비슷한 취향을 가진 친구들을 소개시켜줄게! 내 관심사 탭에 가볼래?', 'time': firestore.SERVER_TIMESTAMP, 'uid': 'AIfriend'})
-        keybert_check = 0
     else:
         # server log for checking error
         # print('keyword is not matched : ', bert_keyword)
