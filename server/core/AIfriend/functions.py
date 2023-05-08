@@ -195,7 +195,7 @@ def key_bert(user_id, database, model_ST, model_W2V, category):
     # Cosine similarity calculation (document, keyword)
     distances = cosine_similarity(doc_embedding, candidate_embeddings)
     keywords = [candidates[index] for index in distances.argsort()[0][-top_n:]]
-    print(keywords)
+    # print(keywords)
 
     """# **Maximal Marginal Relevance**"""
 
@@ -227,12 +227,12 @@ def key_bert(user_id, database, model_ST, model_W2V, category):
     for ctg in category:
         for word in keyword_mmr:
             score = model_W2V.wv.similarity(ctg, word)
-            print(ctg, word, score)
+            # print(ctg, word, score)
 
             if score > 0.8 and max_score < score:
                 max_score = score
                 max_ctg = ctg
                 max_kw = word
 
-    print(max_ctg, max_kw, max_score)
+    # print(max_ctg, max_kw, max_score)
     return max_ctg
