@@ -1,5 +1,5 @@
 # AI Friend 
-
+[Wiki](https://github.com/AI-Friend-Project/AI-Friend/wiki)
 ### What is AI Friend?
 An application that identifies users' interests while talking to chatbots and matches people with similar interests.
 
