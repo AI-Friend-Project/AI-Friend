@@ -61,9 +61,6 @@ Calculate word similarity between keywords and categories, Connect one category 
 | 이예준 | Backend & Server, GPT-2|
 | 이지윤 | Client, KeyBERT |
 
-
-
-
-
- 
+### Project Presentation
+[![Video Label](http://img.youtube.com/vi/5F6hY9IrOIs/0.jpg)](https://youtu.be/5F6hY9IrOIs?t=0s)
 
